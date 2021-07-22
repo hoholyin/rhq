@@ -7,6 +7,12 @@ let port = 8080;
 const cors = require('cors');
 let apiRoutes = require('./api-routes')
 
+let port = process.env.PORT
+if (port == null || port == "") {
+    port = 8000;
+}
+app.list(port)
+
 app.use(cors())
 app.use(express.json())
 app.use('/api', apiRoutes)
