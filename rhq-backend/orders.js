@@ -1,25 +1,24 @@
 const RHQSheets = require('./RHQsheets')
-const jwt = RHQSheets.jwt
-const sheets = RHQSheets.sheets
-const SHEET_ID = RHQSheets.SHEET_ID
 
-const ordersSizeRange = 'RHQServer!A2:A2'
+const numberOfOrdersRange = 'RHQServer!A2:A2'
+const lastInvoiceNumberRange = 'RHQServer!B2:B2'
 
-exports.getOrdersSize = function (req, res) {
-    jwt.authorize((err, result) => {
-        sheets.spreadsheets.values.batchGet({
-            auth: jwt,
-            spreadsheetId: SHEET_ID,
-            ranges: [ordersSizeRange]
-        }, (err, result) => {
+exports.getOrdersInfo = function (req, res) {
+    RHQSheets.batchGet(
+        [numberOfOrdersRange, lastInvoiceNumberRange],
+        (err, result) => {
             if (err) {
-                res.status(500).json({ error: 'Internal server error'})
+                res.status(500).json({error: 'Internal server error'})
             }
             const size = result.data.valueRanges[0].values[0][0]
+            const lastInvoiceNumber = result.data.valueRanges[1].values[0][0]
             res.status(200).json({
                 message: "OK",
-                data: size
+                data: {
+                    size: size,
+                    lastInvoiceNumber: lastInvoiceNumber
+                }
             })
-        })
-    })
+        }
+    )
 }
