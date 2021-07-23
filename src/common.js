@@ -29,3 +29,69 @@ export const generateNextInvoiceNumber = (lastInvoiceNumber) => {
 export const generateCode = (category, brand, detailed, color, desc) => {
     return category + brand + detailed + color + desc
 }
+
+export const itemExists = (row) => {
+    return row >= 4
+}
+
+export const apiEndpoint = "https://rhq-backend.herokuapp.com/api"
+
+export const appleDetailedList = [
+    "Airpods 1/2",
+    "Airpods Pro",
+    "12",
+    "12/ 12 Pro",
+    "12 Pro max",
+    "12 Pro",
+    "11",
+    "11 Pro",
+    "11 Pro max",
+    "X/XS"
+]
+export const appleCategoryList = [
+    "Phone case",
+    "Airpods case",
+    "Screen protector"
+]
+
+export const samsungDetailedList = [
+    "S21",
+    "S21 Plus",
+    "S21 Ultra",
+    "Note 20",
+    "Note 20 Ultra"
+]
+
+export const samsungCategoryList = [
+    "Phone case",
+    "Screen protector"
+]
+
+export const naDetailedList = [
+    "Selfie ring light",
+    "Magnetic car mount stand ring",
+]
+
+export const naCategoryList = [
+    "Phone accessories"
+]
+
+export const defaultColorList = [
+    "Azure",
+    "Black",
+    "White",
+    "Red",
+    "Pink",
+    "Clear",
+    "Blue",
+    "Gold",
+    "NA"
+]
+
+export const defaultDescList = [
+    "Border",
+    "Matt",
+    "Ultra thick",
+    "Camera cover",
+    "NA"
+]
