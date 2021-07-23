@@ -10,6 +10,7 @@ import {createRequestOptions} from "./requestBuilder";
 import React, {useState} from "react";
 import "./submitOrderForm.css";
 import {radioSelection} from "./formComponents";
+import Loader from "./Loader";
 
 const SubmitOrderForm = (props) => {
     const [customerName, setCustomerName] = useState("");
@@ -19,10 +20,10 @@ const SubmitOrderForm = (props) => {
     const [color, setColor] = useState("")
     const [desc, setDesc] = useState("")
     const [qty, setQty] = useState("1")
-    const [discount, setDiscount] = useState("$")
+    const [discount, setDiscount] = useState("$0.00")
     const [status, setStatus] = useState("")
     const [remarks, setRemarks] = useState("NA")
-    const [tips, setTips] = useState("$")
+    const [tips, setTips] = useState("$0.00")
 
     const [submitting, setSubmitting] = useState(false)
 
@@ -246,7 +247,11 @@ const SubmitOrderForm = (props) => {
             <span className="form-label">Tips</span>
             <input className="input-box" type="text" value={tips} onChange={e => updatePrice(e.target.value, setTips)}/>
             {isWarningMessageVisible ? warningMessageComponent(warningMessage) : null}
-            {canSubmit() ? activeButton() : inactiveButton()}
+            {canSubmit()
+                ? activeButton()
+                : submitting
+                    ? <Loader />
+                    : inactiveButton()}
         </div>
     )
 }
