@@ -1,19 +1,43 @@
 import logo from './assets/logo_transparent.png';
-import './App.css';
-import React from "react";
-import {Link} from "react-router-dom";
+import React, {useState} from "react";
+import Home from "./Home";
+import SubmitOrderPage from "./submitOrderPage";
+import OrderSubmittedPage from "./orderSubmittedPage";
 
 function App() {
-  return (
+    const setPage = (page) => {
+        const res = page.split("/");
+        const path = res[res.length - 1]
+        switch (path) {
+            case "":
+                return (
+                    <Home navigate={setCurrentPage} />
+                )
+            case "submitOrder":
+                return (
+                    <SubmitOrderPage navigate={setCurrentPage}/>
+                )
+            case "orderSubmitted":
+                return (
+                    <OrderSubmittedPage navigate={setCurrentPage}/>
+                )
+           default:
+               return (
+                   <Home navigate={setCurrentPage} />
+               )
+        }
+    }
+
+    const getPage = () => {
+        const url = window.location.href.split("/");
+        return url[url.length - 1];
+    }
+
+    const [currentPage, setCurrentPage] = useState(getPage());
+
+    return (
     <div className="App">
-      <div className="App-header">
-          <Link to="/">
-              <img src={logo} className="App-logo" alt="logo"/>
-          </Link>
-          <Link className="links" to="/submitOrder">
-              <div className="button">Submit an Order</div>
-          </Link>
-      </div>
+        {setPage(currentPage)}
     </div>
   );
 }

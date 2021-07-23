@@ -34,6 +34,10 @@
   font-family: Lato;
 }
 
+.button:hover {
+  cursor: pointer;
+}
+
 .links {
   text-decoration: none;
 }

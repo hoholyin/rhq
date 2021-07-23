@@ -1,20 +1,20 @@
 import logo from './assets/logo_transparent.png';
-import './App.css';
+import './Home.css';
 import React from "react";
 import {Link} from "react-router-dom";
 import "./orderSubmittedPage.css";
 
-function OrderSubmittedPage() {
+const OrderSubmittedPage = (props) => {
     return (
         <div className="App">
             <div className="App-header">
-                <Link to="/">
-                    <img src={logo} className="App-logo" alt="logo"/>
-                </Link>
+                <div onClick={() => props.navigate("")}>
+                    <img src={logo} className="submit-order-app-logo" alt="logo"/>
+                </div>
                 <span className="submitted-message">Order submitted!</span>
-                <Link className="links" to="/">
+                <div onClick={() => props.navigate("")}>
                     <div className="button">Back to Homepage</div>
-                </Link>
+                </div>
             </div>
         </div>
     );

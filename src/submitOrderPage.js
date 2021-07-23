@@ -1,17 +1,16 @@
 import logo from "./assets/logo_transparent.png";
 import React from "react";
-import {Link} from "react-router-dom";
 import "./submitOrderPage.css"
 import SubmitOrderForm from "./submitOrderForm";
 
-function SubmitOrderPage() {
+const SubmitOrderPage = (props) => {
     return (
         <div className="App">
             <header className="App-header">
-                <Link to="/">
+                <div onClick={() => props.navigate("")}>
                     <img src={logo} className="submit-order-app-logo" alt="logo"/>
-                </Link>
-                <SubmitOrderForm />
+                </div>
+                <SubmitOrderForm navigate={props.navigate}/>
             </header>
         </div>
     );

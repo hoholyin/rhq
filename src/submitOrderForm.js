@@ -10,9 +10,8 @@ import {createRequestOptions} from "./requestBuilder";
 import React, {useState} from "react";
 import "./submitOrderForm.css";
 import {radioSelection} from "./formComponents";
-import { Redirect } from 'react-router-dom'
 
-function SubmitOrderForm() {
+const SubmitOrderForm = (props) => {
     const [customerName, setCustomerName] = useState("");
     const [category, setCategory] = useState("")
     const [brand, setBrand] = useState("")
@@ -26,7 +25,6 @@ function SubmitOrderForm() {
     const [tips, setTips] = useState("$")
 
     const [submitting, setSubmitting] = useState(false)
-    const [shouldRedirect, setShouldRedirect] = useState(false)
 
     const [detailedList, setDetailedList] = useState([])
     const [categoryList, setCategoryList] = useState([])
@@ -151,7 +149,7 @@ function SubmitOrderForm() {
         const createOrderRO = createRequestOptions('POST', order)
         await fetch(apiEndpoint + '/order', createOrderRO)
         setSubmitting(false)
-        setShouldRedirect(true)
+        props.navigate("orderSubmitted")
     }
 
     const canSubmit = () => {
@@ -220,10 +218,6 @@ function SubmitOrderForm() {
         return (
             <div className="form-button" onClick={submitOrder}>Submit Order</div>
         )
-    }
-
-    if (shouldRedirect) {
-        return <Redirect to={'/orderSubmitted'} />
     }
 
     return (
