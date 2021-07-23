@@ -241,7 +241,7 @@ const SubmitOrderForm = (props) => {
             <span className="form-label">Discount</span>
             <input className="input-box" type="text" value={discount} onChange={e => updatePrice(e.target.value, setDiscount)}/>
             <span className="form-label">Status</span>
-            {radioSelection("status", ["Confirmed", "Paid"], setStatus)}
+            {radioSelection("status", ["PENDING", "PAID"], setStatus)}
             <span className="form-label">Remarks</span>
             <input className="input-box" type="text" value={remarks} onChange={e => setRemarks(e.target.value)}/>
             <span className="form-label">Tips</span>
