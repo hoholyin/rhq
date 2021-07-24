@@ -98,7 +98,6 @@ const SubmitOrderForm = (props) => {
         }
 
         const itemRow = await checkItemRow();
-        console.log(itemRow)
         if (!itemExists(itemRow)) {
             setWarning("Item does not exists")
             setSubmitting(false)
@@ -149,6 +148,15 @@ const SubmitOrderForm = (props) => {
         }
         const createOrderRO = createRequestOptions('POST', order)
         await fetch(apiEndpoint + '/order', createOrderRO)
+        if (tips !== "$0.00") {
+            const tipsObject = {
+                customer: customerName,
+                invoice_number: currInvoiceNumber,
+                tipAmount: tips
+            }
+            const addTipsRO = createRequestOptions('POST', tipsObject)
+            await fetch(apiEndpoint + '/addTips', addTipsRO)
+        }
         setSubmitting(false)
         props.navigate("orderSubmitted")
     }
@@ -165,7 +173,6 @@ const SubmitOrderForm = (props) => {
     }
 
     const updateBrand = (brand) => {
-        console.log("settin brand to " + brand)
         setCategoryList(["NA"])
         setDetailedList(["NA"])
         setColorList(defaultColorList)
