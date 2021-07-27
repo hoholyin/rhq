@@ -75,6 +75,22 @@ const SubmitOrderForm = (props) => {
         }
     }
 
+    const addPrice = (p1, p2) => {
+        if (!isPrice(p1) || !isPrice(p2)) {
+            return "$0.00"
+        }
+        const p1Float = parseFloat(p1.substring(1))
+        const p2Float = parseFloat(p2.substring(1))
+        let totalFloat = (p1Float + p2Float).toString()
+        if (!totalFloat.includes(".")) {
+            totalFloat += ".00"
+        }
+        while (totalFloat.split(".")[1].length < 2) {
+            totalFloat += "0"
+        }
+        return "$" + totalFloat
+    }
+
     const isBossCorrect = async () => {
         setBossName(bossName.toUpperCase())
         const getBossNamesRO = createRequestOptions('GET')
@@ -195,7 +211,7 @@ const SubmitOrderForm = (props) => {
             indexNumber: currCashInIndex,
             date: today,
             description: cashInDescription,
-            amount: totalAmount,
+            amount: addPrice(totalAmount, tips),
             remarks: bossName
         }
         const createLastCashInRO = createRequestOptions('POST', createLastCashInObject)
