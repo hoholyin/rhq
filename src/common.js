@@ -26,6 +26,15 @@ export const generateNextInvoiceNumber = (lastInvoiceNumber) => {
     return currYear + currMonth + "001"
 }
 
+export const generateNextCashInIndexNumber = (lastCashInIndexNumber) => {
+    lastCashInIndexNumber += 1
+    lastCashInIndexNumber = lastCashInIndexNumber.toString()
+    while (lastCashInIndexNumber.length < 3) {
+        lastCashInIndexNumber = "0" + lastCashInIndexNumber
+    }
+    return "CI" + lastCashInIndexNumber
+}
+
 export const generateCode = (category, brand, detailed, color, desc) => {
     return category + brand + detailed + color + desc
 }

@@ -1,7 +1,7 @@
 import {
     apiEndpoint, appleCategoryList,
     appleDetailedList, defaultColorList, defaultDescList,
-    generateCode,
+    generateCode, generateNextCashInIndexNumber,
     generateNextInvoiceNumber,
     generateTodayDate, itemExists, naCategoryList, naDetailedList, samsungCategoryList,
     samsungDetailedList
@@ -24,6 +24,7 @@ const SubmitOrderForm = (props) => {
     const [status, setStatus] = useState("")
     const [remarks, setRemarks] = useState("NA")
     const [tips, setTips] = useState("$0.00")
+    const [bossName, setBossName] = useState("")
 
     const [submitting, setSubmitting] = useState(false)
 
@@ -74,6 +75,20 @@ const SubmitOrderForm = (props) => {
         }
     }
 
+    const isBossCorrect = async () => {
+        setBossName(bossName.toUpperCase)
+        const getBossNamesRO = createRequestOptions('GET')
+        const bossNamesPromise = await fetch(apiEndpoint + '/bossNames', getBossNamesRO)
+        const bossNamesResult = await bossNamesPromise.json()
+        const bossNames = bossNamesResult.data.bossNames
+        for (const index in bossNames) {
+           if (bossNames[index].toUpperCase() === bossName.toUpperCase()) {
+               return true
+           }
+        }
+        return false
+    }
+
     const submitOrder = async () => {
         setSubmitting(true)
         resetWarningMessages()
@@ -93,6 +108,13 @@ const SubmitOrderForm = (props) => {
 
         if (!isPrice(tips)) {
             setWarning("Invalid tips!")
+            setSubmitting(false)
+            return
+        }
+
+        const correctBoss = await isBossCorrect()
+        if (!correctBoss) {
+            setWarning("Invalid boss!")
             setSubmitting(false)
             return
         }
@@ -147,7 +169,10 @@ const SubmitOrderForm = (props) => {
             tips: tips,
         }
         const createOrderRO = createRequestOptions('POST', order)
-        await fetch(apiEndpoint + '/order', createOrderRO)
+        const totalAmountPromise = await fetch(apiEndpoint + '/order', createOrderRO)
+        const totalAmountResult = await totalAmountPromise.json()
+        const totalAmount = totalAmountResult.data.totalAmount
+
         if (tips !== "$0.00") {
             const tipsObject = {
                 customer: customerName,
@@ -157,6 +182,25 @@ const SubmitOrderForm = (props) => {
             const addTipsRO = createRequestOptions('POST', tipsObject)
             await fetch(apiEndpoint + '/addTips', addTipsRO)
         }
+
+        const getLastCashInRO = createRequestOptions('GET')
+        const lastCashInPromise = await fetch(apiEndpoint + '/cce', getLastCashInRO)
+        const lastCashInResult = await lastCashInPromise.json()
+        const lastCashInIndex = parseInt(lastCashInResult.data.lastCashInIndex)
+
+        const currCashInIndex = generateNextCashInIndexNumber(lastCashInIndex)
+        const cashInDescription = "Sales - " + currInvoiceNumber
+
+        const createLastCashInObject = {
+            indexNumber: currCashInIndex,
+            date: today,
+            description: cashInDescription,
+            amount: totalAmount,
+            remarks: bossName
+        }
+        const createLastCashInRO = createRequestOptions('POST', createLastCashInObject)
+        await fetch(apiEndpoint + '/cce', createLastCashInRO)
+
         setSubmitting(false)
         props.navigate("orderSubmitted")
     }
@@ -169,6 +213,7 @@ const SubmitOrderForm = (props) => {
             && color !== ""
             && desc !== ""
             && status !== ""
+            && bossName !== ""
             && submitting === false
     }
 
@@ -253,6 +298,8 @@ const SubmitOrderForm = (props) => {
             <input className="input-box" type="text" value={remarks} onChange={e => setRemarks(e.target.value)}/>
             <span className="form-label">Tips</span>
             <input className="input-box" type="text" value={tips} onChange={e => updatePrice(e.target.value, setTips)}/>
+            <span className="form-label">Boss in-charge of Sale</span>
+            <input className="input-box" type="text" onChange={e => setBossName(e.target.value)}/>
             {isWarningMessageVisible ? warningMessageComponent(warningMessage) : null}
             {canSubmit()
                 ? activeButton()

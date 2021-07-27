@@ -1,7 +1,6 @@
 import logo from './assets/logo_transparent.png';
 import './Home.css';
 import React from "react";
-import {Link} from "react-router-dom";
 import "./orderSubmittedPage.css";
 
 const OrderSubmittedPage = (props) => {

@@ -1,4 +1,3 @@
-import logo from './assets/logo_transparent.png';
 import React, {useState} from "react";
 import Home from "./Home";
 import SubmitOrderPage from "./submitOrderPage";
