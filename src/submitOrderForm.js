@@ -76,7 +76,7 @@ const SubmitOrderForm = (props) => {
     }
 
     const isBossCorrect = async () => {
-        setBossName(bossName.toUpperCase)
+        setBossName(bossName.toUpperCase())
         const getBossNamesRO = createRequestOptions('GET')
         const bossNamesPromise = await fetch(apiEndpoint + '/bossNames', getBossNamesRO)
         const bossNamesResult = await bossNamesPromise.json()
