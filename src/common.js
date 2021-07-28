@@ -43,6 +43,36 @@ export const itemExists = (row) => {
     return row >= 4
 }
 
+export const isPrice = (price) => {
+    if (!price.startsWith("$")) {
+        return false
+    }
+    try {
+        const trimmed = price.substring(1)
+        return !isNaN(trimmed)
+    } catch (err) {
+        return false
+    }
+}
+
+
+export const addPrice = (p1, p2) => {
+    if (!isPrice(p1) || !isPrice(p2)) {
+        return "$0.00"
+    }
+    const p1Float = parseFloat(p1.substring(1))
+    const p2Float = parseFloat(p2.substring(1))
+    let totalFloat = (p1Float + p2Float).toString()
+    if (!totalFloat.includes(".")) {
+        totalFloat += ".00"
+    }
+    while (totalFloat.split(".")[1].length < 2) {
+        totalFloat += "0"
+    }
+    return "$" + totalFloat
+}
+
+
 export const apiEndpoint = "https://rhq-backend.herokuapp.com/api"
 
 export const appleDetailedList = [

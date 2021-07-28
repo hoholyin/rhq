@@ -1,12 +1,15 @@
 import {
+    addPrice,
     apiEndpoint, appleCategoryList,
     appleDetailedList, defaultColorList, defaultDescList,
     generateCode, generateNextCashInIndexNumber,
     generateNextInvoiceNumber,
-    generateTodayDate, itemExists, naCategoryList, naDetailedList, samsungCategoryList,
+    generateTodayDate, isPrice, itemExists, naCategoryList, naDetailedList, samsungCategoryList,
     samsungDetailedList
 } from "./common";
 import {createRequestOptions} from "./requestBuilder";
+import tick from "./assets/tick.png";
+import cross from "./assets/cross.png";
 import React, {useState} from "react";
 import "./submitOrderForm.css";
 import {radioSelection} from "./formComponents";
@@ -26,16 +29,50 @@ const SubmitOrderForm = (props) => {
     const [tips, setTips] = useState("$0.00")
     const [bossName, setBossName] = useState("")
 
+    const [isStatusMessagesVisible, setStatusMessagesVisible] = useState(false)
+    const [bossCheckCorrect, setBossCheckCorrect] = useState(0)
+    const [itemExistCheckCorrect, setItemExistCheckCorrect] = useState(0)
+    const [itemInStockCheckCorrect, setItemInStockCheckCorrect] = useState(0)
+    const [updatingInventoryCheckCorrect, setUpdatingInventoryCheckCorrect] = useState(0)
+    const [submittingOrderCheckCorrect, setSubmittingOrderCheckCorrect] = useState(0)
+    const [updatingAccountsCheckCorrect, setUpdatingAccountsCheckCorrect] = useState(0)
+
+    const indicators = [
+        {
+            indicator: bossCheckCorrect,
+            setter: setBossCheckCorrect
+        },
+        {
+            indicator: itemExistCheckCorrect,
+            setter: setItemExistCheckCorrect
+        },
+        {
+            indicator: itemInStockCheckCorrect,
+            setter: setItemInStockCheckCorrect
+        },
+        {
+            indicator: updatingInventoryCheckCorrect,
+            setter: setUpdatingInventoryCheckCorrect
+        },
+        {
+            indicator: submittingOrderCheckCorrect,
+            setter: setSubmittingOrderCheckCorrect
+        },
+        {
+            indicator: updatingAccountsCheckCorrect,
+            setter: setUpdatingAccountsCheckCorrect
+        }
+    ]
+
     const [submitting, setSubmitting] = useState(false)
+
+    const [isWarningMessageVisible, setWarningMessageVisible] = useState(false)
+    const [warningMessage, setWarningMessage] = useState("")
 
     const [detailedList, setDetailedList] = useState([])
     const [categoryList, setCategoryList] = useState([])
     const [colorList, setColorList] = useState([])
     const [descList, setDescList] = useState([])
-
-    const [warningMessage, setWarningMessage] = useState("")
-    const [isWarningMessageVisible, setWarningMessageVisible] = useState(false)
-
 
     const checkItemRow = async () => {
         const code = generateCode(category, brand, detailed, color,desc)
@@ -55,40 +92,14 @@ const SubmitOrderForm = (props) => {
         setWarningMessage("")
     }
 
-    const isPrice = (price) => {
-        if (!price.startsWith("$")) {
-            return false
-        }
-        try {
-            const trimmed = price.substring(1)
-            if (trimmed.includes(".")) {
-                const pieces = trimmed.split(".")
-                if (pieces.length !== 2) {
-                    return false
-                }
-                parseInt(pieces[0])
-                parseInt(pieces[1])
-                return true
-            }
-        } catch (err) {
-            return false
-        }
-    }
-
-    const addPrice = (p1, p2) => {
-        if (!isPrice(p1) || !isPrice(p2)) {
-            return "$0.00"
-        }
-        const p1Float = parseFloat(p1.substring(1))
-        const p2Float = parseFloat(p2.substring(1))
-        let totalFloat = (p1Float + p2Float).toString()
-        if (!totalFloat.includes(".")) {
-            totalFloat += ".00"
-        }
-        while (totalFloat.split(".")[1].length < 2) {
-            totalFloat += "0"
-        }
-        return "$" + totalFloat
+    const resetStatusMessages = () => {
+        setStatusMessagesVisible(false)
+        setBossCheckCorrect(0)
+        setItemExistCheckCorrect(0)
+        setItemInStockCheckCorrect(0)
+        setUpdatingInventoryCheckCorrect(0)
+        setSubmittingOrderCheckCorrect(0)
+        setUpdatingAccountsCheckCorrect(0)
     }
 
     const isBossCorrect = async () => {
@@ -106,119 +117,138 @@ const SubmitOrderForm = (props) => {
     }
 
     const submitOrder = async () => {
-        setSubmitting(true)
-        resetWarningMessages()
-        if (!/^[1-9]\d*$/.test(qty)) {
-            setWarning("Invalid quantity!")
-            return
-        }
+        try {
+            setStatusMessagesVisible(false)
+            setSubmitting(true)
+            resetWarningMessages()
+            if (!/^[1-9]\d*$/.test(qty)) {
+                setWarning("Invalid quantity!")
+                setSubmitting(false)
+                return
+            }
 
-        setDiscount(discount === "$" ? "$0.00" : discount)
-        setTips(tips === "$" ? "$0.00" : tips)
+            setDiscount(discount === "$" ? "$0.00" : discount)
+            setTips(tips === "$" ? "$0.00" : tips)
 
-        if (!isPrice(discount)) {
-            setWarning("Invalid discount!")
-            setSubmitting(false)
-            return
-        }
+            if (!isPrice(discount)) {
+                setWarning("Invalid discount!")
+                setSubmitting(false)
+                return
+            }
 
-        if (!isPrice(tips)) {
-            setWarning("Invalid tips!")
-            setSubmitting(false)
-            return
-        }
+            if (!isPrice(tips)) {
+                setWarning("Invalid tips!")
+                setSubmitting(false)
+                return
+            }
+            resetStatusMessages()
+            setStatusMessagesVisible(true)
 
-        const correctBoss = await isBossCorrect()
-        if (!correctBoss) {
-            setWarning("Invalid boss!")
-            setSubmitting(false)
-            return
-        }
+            const correctBoss = await isBossCorrect()
+            if (!correctBoss) {
+                setBossCheckCorrect(2)
+                setSubmitting(false)
+                return
+            }
+            setBossCheckCorrect(1)
 
-        const itemRow = await checkItemRow();
-        if (!itemExists(itemRow)) {
-            setWarning("Item does not exists")
-            setSubmitting(false)
-            return
-        }
+            const itemRow = await checkItemRow();
+            if (!itemExists(itemRow)) {
+                setItemExistCheckCorrect(2)
+                setSubmitting(false)
+                return
+            }
+            setItemExistCheckCorrect(1)
 
-        const getItemQtyRO = createRequestOptions('POST', {row: itemRow})
-        const itemQtyPromise = await fetch(apiEndpoint + '/inventoryQty', getItemQtyRO)
-        const itemQtyResult = await itemQtyPromise.json()
-        const itemQty = itemQtyResult.data
-        const stockIn = parseInt(itemQty.stockIn)
-        const stockOut = parseInt(itemQty.stockOut)
-        if (stockIn + stockOut <= 0) {
-            setWarning("Out of stock for item!")
-            setSubmitting(false)
-            return
-        }
-        const updateItemQtyRO = createRequestOptions('POST', {row: itemRow, newQty: stockOut - 1})
-        await fetch(apiEndpoint + '/inventoryUpdateQty', updateItemQtyRO)
+            const getItemQtyRO = createRequestOptions('POST', {row: itemRow})
+            const itemQtyPromise = await fetch(apiEndpoint + '/inventoryQty', getItemQtyRO)
+            const itemQtyResult = await itemQtyPromise.json()
+            const itemQty = itemQtyResult.data
+            const stockIn = parseInt(itemQty.stockIn)
+            const stockOut = parseInt(itemQty.stockOut)
+            if (stockIn + stockOut <= 0) {
+                setItemInStockCheckCorrect(2)
+                setSubmitting(false)
+                return
+            }
+            setItemInStockCheckCorrect(1)
+            const updateItemQtyRO = createRequestOptions('POST', {row: itemRow, newQty: stockOut - 1})
+            await fetch(apiEndpoint + '/inventoryUpdateQty', updateItemQtyRO)
+            setUpdatingInventoryCheckCorrect(1)
 
-        const getOrdersInfoRO = createRequestOptions('GET')
-        const ordersInfoPromise = await fetch(apiEndpoint + '/orders', getOrdersInfoRO)
-        const ordersInfoResult = await ordersInfoPromise.json()
-        const ordersSize = parseInt(ordersInfoResult.data.size)
-        const lastInvoiceNumber = ordersInfoResult.data.lastInvoiceNumber
+            const getOrdersInfoRO = createRequestOptions('GET')
+            const ordersInfoPromise = await fetch(apiEndpoint + '/orders', getOrdersInfoRO)
+            const ordersInfoResult = await ordersInfoPromise.json()
+            const ordersSize = parseInt(ordersInfoResult.data.size)
+            const lastInvoiceNumber = ordersInfoResult.data.lastInvoiceNumber
 
-        const nextOrderIndex = ordersSize + 1
-        const nextOrderRow = nextOrderIndex + 1
+            const nextOrderIndex = ordersSize + 1
+            const nextOrderRow = nextOrderIndex + 1
 
-        const currInvoiceNumber = generateNextInvoiceNumber(lastInvoiceNumber)
-        const today = generateTodayDate()
+            const currInvoiceNumber = generateNextInvoiceNumber(lastInvoiceNumber)
+            const today = generateTodayDate()
 
-        const order = {
-            row_number: nextOrderRow,
-            customer: customerName,
-            invoice_number: currInvoiceNumber,
-            invoice_date: today,
-            category: category,
-            brand: brand,
-            detailed: detailed,
-            color: color,
-            desc: desc,
-            qty: qty,
-            discount: discount,
-            status: status,
-            remarks: remarks,
-            tips: tips,
-        }
-        const createOrderRO = createRequestOptions('POST', order)
-        const totalAmountPromise = await fetch(apiEndpoint + '/order', createOrderRO)
-        const totalAmountResult = await totalAmountPromise.json()
-        const totalAmount = totalAmountResult.data.totalAmount
-
-        if (tips !== "$0.00") {
-            const tipsObject = {
+            const order = {
+                row_number: nextOrderRow,
                 customer: customerName,
                 invoice_number: currInvoiceNumber,
-                tipAmount: tips
+                invoice_date: today,
+                category: category,
+                brand: brand,
+                detailed: detailed,
+                color: color,
+                desc: desc,
+                qty: qty,
+                discount: discount,
+                status: status,
+                remarks: remarks,
+                tips: tips,
             }
-            const addTipsRO = createRequestOptions('POST', tipsObject)
-            await fetch(apiEndpoint + '/addTips', addTipsRO)
+            const createOrderRO = createRequestOptions('POST', order)
+            const totalAmountPromise = await fetch(apiEndpoint + '/order', createOrderRO)
+            const totalAmountResult = await totalAmountPromise.json()
+            const totalAmount = totalAmountResult.data.totalAmount
+            setSubmittingOrderCheckCorrect(1)
+
+            if (tips !== "$0.00") {
+                const tipsObject = {
+                    customer: customerName,
+                    invoice_number: currInvoiceNumber,
+                    tipAmount: tips
+                }
+                const addTipsRO = createRequestOptions('POST', tipsObject)
+                await fetch(apiEndpoint + '/addTips', addTipsRO)
+            }
+
+            const getLastCashInRO = createRequestOptions('GET')
+            const lastCashInPromise = await fetch(apiEndpoint + '/cce', getLastCashInRO)
+            const lastCashInResult = await lastCashInPromise.json()
+            const lastCashInIndex = parseInt(lastCashInResult.data.lastCashInIndex)
+
+            const currCashInIndex = generateNextCashInIndexNumber(lastCashInIndex)
+            const cashInDescription = "Sales - " + currInvoiceNumber
+
+            const createLastCashInObject = {
+                indexNumber: currCashInIndex,
+                date: today,
+                description: cashInDescription,
+                amount: addPrice(totalAmount, tips),
+                remarks: bossName
+            }
+            const createLastCashInRO = createRequestOptions('POST', createLastCashInObject)
+            await fetch(apiEndpoint + '/cce', createLastCashInRO)
+            setUpdatingAccountsCheckCorrect(true)
+
+            setSubmitting(false)
+            props.navigate("orderSubmitted")
+        } catch (err) {
+            for (const element in indicators) {
+                if (element.indicator === 0) {
+                    element.setter(2)
+                    break
+                }
+            }
         }
-
-        const getLastCashInRO = createRequestOptions('GET')
-        const lastCashInPromise = await fetch(apiEndpoint + '/cce', getLastCashInRO)
-        const lastCashInResult = await lastCashInPromise.json()
-        const lastCashInIndex = parseInt(lastCashInResult.data.lastCashInIndex)
-
-        const currCashInIndex = generateNextCashInIndexNumber(lastCashInIndex)
-        const cashInDescription = "Sales - " + currInvoiceNumber
-
-        const createLastCashInObject = {
-            indexNumber: currCashInIndex,
-            date: today,
-            description: cashInDescription,
-            amount: addPrice(totalAmount, tips),
-            remarks: bossName
-        }
-        const createLastCashInRO = createRequestOptions('POST', createLastCashInObject)
-        await fetch(apiEndpoint + '/cce', createLastCashInRO)
-
-        setSubmitting(false)
-        props.navigate("orderSubmitted")
     }
 
     const canSubmit = () => {
@@ -271,6 +301,43 @@ const SubmitOrderForm = (props) => {
         callback(price)
     }
 
+    const statusMessageComponent = () => {
+        return (
+            <div className="status-messages-container">
+                <div className="status-message-row">
+                    <span className="status-message">Boss correct</span>
+                    {bossCheckCorrect === 1 && <img src={tick} className="status-icon" alt="logo"/>}
+                    {bossCheckCorrect === 2 && <img src={cross} className="status-icon" alt="logo"/>}
+                </div>
+                <div className="status-message-row">
+                    <span className="status-message">Item exists</span>
+                    {itemExistCheckCorrect === 1 && <img src={tick} className="status-icon" alt="logo"/>}
+                    {itemExistCheckCorrect === 2 && <img src={cross} className="status-icon" alt="logo"/>}
+                </div>
+                <div className="status-message-row">
+                    <span className="status-message">In stock</span>
+                    {itemInStockCheckCorrect === 1 && <img src={tick} className="status-icon" alt="logo"/>}
+                    {itemInStockCheckCorrect === 2 && <img src={cross} className="status-icon" alt="logo"/>}
+                </div>
+                <div className="status-message-row">
+                    <span className="status-message">Updating inventory</span>
+                    {updatingInventoryCheckCorrect === 1 && <img src={tick} className="status-icon" alt="logo"/>}
+                    {updatingInventoryCheckCorrect === 2 && <img src={cross} className="status-icon" alt="logo"/>}
+                </div>
+                <div className="status-message-row">
+                    <span className="status-message">Submitting order</span>
+                    {submittingOrderCheckCorrect === 1 && <img src={tick} className="status-icon" alt="logo"/>}
+                    {submittingOrderCheckCorrect === 2 && <img src={cross} className="status-icon" alt="logo"/>}
+                </div>
+                <div className="status-message-row">
+                    <span className="status-message">Updating accounts</span>
+                    {updatingAccountsCheckCorrect === 1 && <img src={tick} className="status-icon" alt="logo"/>}
+                    {updatingAccountsCheckCorrect === 2 && <img src={cross} className="status-icon" alt="logo"/>}
+                </div>
+            </div>
+        )
+    }
+
     const warningMessageComponent = (warningMessage) => {
         return (
             <span className="warning-message">{warningMessage}</span>
@@ -316,7 +383,8 @@ const SubmitOrderForm = (props) => {
             <input className="input-box" type="text" value={tips} onChange={e => updatePrice(e.target.value, setTips)}/>
             <span className="form-label">Boss in-charge of Sale</span>
             <input className="input-box" type="text" onChange={e => setBossName(e.target.value)}/>
-            {isWarningMessageVisible ? warningMessageComponent(warningMessage) : null}
+            {isWarningMessageVisible && warningMessageComponent(warningMessage)}
+            {isStatusMessagesVisible && statusMessageComponent()}
             {canSubmit()
                 ? activeButton()
                 : submitting
