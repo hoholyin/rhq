@@ -237,9 +237,28 @@ const SubmitOrderForm = (props) => {
             }
             const createLastCashInRO = createRequestOptions('POST', createLastCashInObject)
             await fetch(apiEndpoint + '/cce', createLastCashInRO)
-            setUpdatingAccountsCheckCorrect(true)
+            setUpdatingAccountsCheckCorrect(1)
 
+            const createInvoiceObject = {
+                customer: customerName,
+                invoice_number: currInvoiceNumber,
+                date: today,
+                item: {
+                    desc: generateCode(category, brand, detailed, color, desc),
+                    qty: qty
+                }
+            }
+            const createInvoiceRO = createRequestOptions('POST', createInvoiceObject)
+            const invoicePromise = await fetch(apiEndpoint + '/invoice', createInvoiceRO)
+            const invoiceResult = await invoicePromise.json()
+            const invoiceUrl = invoiceResult.data.invoice_url
             setSubmitting(false)
+
+            const invoiceTab = window.open(invoiceUrl, '_blank', 'noopener,noreferrer')
+            if (invoiceTab) {
+                invoiceTab.opener = null
+            }
+
             props.navigate("orderSubmitted")
         } catch (err) {
             for (const element in indicators) {
