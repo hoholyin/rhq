@@ -1,0 +1,43 @@
+.inventory-list {
+    background-color: #282c34;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.inventory-list-row {
+    display: flex;
+    flex-direction: row;
+    margin-left: 10px;
+    margin-right: 10px;
+    font-family: Lato;
+    justify-content: space-between;
+    padding-bottom: 8px;
+}
+
+.inventory-code {
+    font-size: 20px;
+    padding-right: 10px;
+}
+
+.inventory-location {
+    font-size: 18px;
+}
+
+@media (max-width: 500px) {
+    .inventory-code {
+        font-size: 1.5vh;
+        padding-right: 10px;
+    }
+
+    .inventory-location {
+        font-size: 1.8vh;
+    }
+
+    .inventory-list {
+        background-color: #282c34;
+        padding: 10px;
+        margin-left: 12px;
+        margin-right: 12px;
+        border-radius: 5px;
+    }
+}

@@ -5,6 +5,9 @@ const Home = (props) => {
     return (
         <div className="App-header">
             <img src={logo} className="App-logo" alt="logo"/>
+            <div className="button" onClick={() => props.navigate("checkInventory")}>
+                Check inventory
+            </div>
             <div className="button" onClick={() => props.navigate("submitOrder")}>
                 Submit an Order
             </div>

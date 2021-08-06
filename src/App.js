@@ -2,6 +2,7 @@ import React, {useState} from "react";
 import Home from "./Home";
 import SubmitOrderPage from "./submitOrderPage";
 import OrderSubmittedPage from "./orderSubmittedPage";
+import CheckInventoryPage from "./checkInventoryPage";
 
 function App() {
     const setPage = (page) => {
@@ -11,6 +12,10 @@ function App() {
             case "":
                 return (
                     <Home navigate={setCurrentPage} />
+                )
+            case "checkInventory":
+                return (
+                    <CheckInventoryPage navigate={setCurrentPage}/>
                 )
             case "submitOrder":
                 return (
