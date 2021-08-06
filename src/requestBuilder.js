@@ -1,5 +1,5 @@
 
-exports.createRequestOptions = function (reqType, body) {
+export const createRequestOptions = function (reqType, body) {
     if (reqType !== 'GET' && reqType !== 'POST') {
         return null
     }
@@ -12,7 +12,7 @@ exports.createRequestOptions = function (reqType, body) {
     }
 }
 
-exports.getRequest = async function (url) {
+export const getRequest = async function (url) {
     const requestOptions = {
         method: 'GET',
         headers: {

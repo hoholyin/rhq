@@ -7,13 +7,13 @@ import {
     generateTodayDate, isPrice, itemExists, naCategoryList, naDetailedList, samsungCategoryList,
     samsungDetailedList
 } from "./common";
-import {createRequestOptions, getRequest} from "./requestBuilder";
 import tick from "./assets/tick.png";
 import cross from "./assets/cross.png";
 import React, {useState} from "react";
 import "./submitOrderForm.css";
 import {radioSelection} from "./formComponents";
 import Loader from "./Loader";
+import {createRequestOptions, getRequest} from "./requestBuilder";
 
 const SubmitOrderForm = (props) => {
     const [customerName, setCustomerName] = useState("");
