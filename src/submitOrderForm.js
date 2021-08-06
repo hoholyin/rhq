@@ -7,7 +7,7 @@ import {
     generateTodayDate, isPrice, itemExists, naCategoryList, naDetailedList, samsungCategoryList,
     samsungDetailedList
 } from "./common";
-import {createRequestOptions} from "./requestBuilder";
+import {createRequestOptions, getRequest} from "./requestBuilder";
 import tick from "./assets/tick.png";
 import cross from "./assets/cross.png";
 import React, {useState} from "react";
@@ -176,11 +176,9 @@ const SubmitOrderForm = (props) => {
             await fetch(apiEndpoint + '/inventoryUpdateQty', updateItemQtyRO)
             setUpdatingInventoryCheckCorrect(1)
 
-            const getOrdersInfoRO = createRequestOptions('GET')
-            const ordersInfoPromise = await fetch(apiEndpoint + '/orders', getOrdersInfoRO)
-            const ordersInfoResult = await ordersInfoPromise.json()
-            const ordersSize = parseInt(ordersInfoResult.data.size)
-            const lastInvoiceNumber = ordersInfoResult.data.lastInvoiceNumber
+            const getOrdersInfo = await getRequest(apiEndpoint + "/orders")
+            const ordersSize = parseInt(getOrdersInfo.data.size)
+            const lastInvoiceNumber = getOrdersInfo.data.lastInvoiceNumber
 
             const nextOrderIndex = ordersSize + 1
             const nextOrderRow = nextOrderIndex + 1
@@ -220,10 +218,8 @@ const SubmitOrderForm = (props) => {
                 await fetch(apiEndpoint + '/addTips', addTipsRO)
             }
 
-            const getLastCashInRO = createRequestOptions('GET')
-            const lastCashInPromise = await fetch(apiEndpoint + '/cce', getLastCashInRO)
-            const lastCashInResult = await lastCashInPromise.json()
-            const lastCashInIndex = parseInt(lastCashInResult.data.lastCashInIndex)
+            const getLastCashIn = await getRequest(apiEndpoint + "/cce")
+            const lastCashInIndex = parseInt(getLastCashIn.data.lastCashInIndex)
 
             const currCashInIndex = generateNextCashInIndexNumber(lastCashInIndex)
             const cashInDescription = "Sales - " + currInvoiceNumber
