@@ -5,6 +5,7 @@ import {getRequest} from "./requestBuilder";
 import {useEffect, useState} from "react";
 import Loader from "./Loader";
 import "./checkInventoryPage.css"
+import back from "./assets/back.png";
 
 const CheckInventoryPage = (props) => {
     const [inventoryList, setInventoryList] = useState([]);
@@ -49,7 +50,10 @@ const CheckInventoryPage = (props) => {
     return (
         <div className="App">
             <header className="App-header">
-                <div onClick={() => props.navigate("")}>
+                <div className="back-button-container" onClick={() => props.navigate("")}>
+                    <img src={back} className="back-button" alt="back"/>
+                </div>
+                <div className="logo-container" onClick={() => props.navigate("")}>
                     <img src={logo} className="submit-order-app-logo" alt="logo"/>
                 </div>
                 <input className="input-box" type="text" onChange={e => search(e.target.value)}/>

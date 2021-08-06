@@ -1,10 +1,29 @@
 
 .inventory-list-container {
     padding-top: 10px;
+    padding-bottom: 10px;
 }
 
 .input-box {
     width: 30vmin;
     font-family: Lato;
-    width: 75%;
+}
+
+.back-button-container {
+    display: flex;
+    flex-direction: row;
+    width: 70vmin;
+    justify-content: flex-start;
+}
+
+.back-button {
+    width: 5vmin;
+}
+
+.back-button:hover {
+    cursor: pointer;
+}
+
+.logo-container:hover {
+    cursor: pointer;
 }
