@@ -12,18 +12,26 @@
 .back-button-container {
     display: flex;
     flex-direction: row;
-    width: 70vmin;
     justify-content: flex-start;
 }
 
-.back-button {
+.back-button{
     width: 5vmin;
 }
 
-.back-button:hover {
+.refresh-button{
+    width: 5vmin;
+}
+
+.interactive:hover {
     cursor: pointer;
 }
 
-.logo-container:hover {
-    cursor: pointer;
+.button-containers {
+    display: flex;
+    flex-direction: row;
+    height: 5vmin;
+    justify-content: space-between;
+    width: 30vmin;
+    padding-bottom: 5px;
 }
