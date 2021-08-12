@@ -2,7 +2,7 @@ export const generateTodayDate = () => {
     const year = new Date().getFullYear().toString()
     const month = (new Date().getMonth() + 1).toString()
     const day = new Date().getDate().toString()
-    return day + "/" + month + "/" + year
+    return month + "/" + day + "/" + year
 }
 export const generateNextInvoiceNumber = (lastInvoiceNumber) => {
     const year = lastInvoiceNumber.substring(0, 4)
@@ -26,7 +26,8 @@ export const generateNextInvoiceNumber = (lastInvoiceNumber) => {
     return currYear + currMonth + "001"
 }
 
-export const generateNextCashInIndexNumber = (lastCashInIndexNumber) => {
+export const generateNextCashInIndexNumber = (lastCashInIndex) => {
+    let lastCashInIndexNumber = parseInt(lastCashInIndex.substring(2))
     lastCashInIndexNumber += 1
     lastCashInIndexNumber = lastCashInIndexNumber.toString()
     while (lastCashInIndexNumber.length < 3) {
@@ -72,6 +73,30 @@ export const addPrice = (p1, p2) => {
     return "$" + totalFloat
 }
 
+export const toLocObjectArray = (locString) => {
+    if (locString === "NA") {
+        return []
+    }
+    let parts = locString.split(",")
+    return parts.map((e) => e.trim())
+        .map((e) => {
+            const name = e.split("(")[0]
+            const qty = e.split("(")[1].split(")")[0]
+            return {
+                name: name,
+                qty: parseInt(qty)
+            }
+        })
+}
+
+export const toLocString = (locObjectArray) => {
+    if (locObjectArray.length === 0) {
+        return "NA"
+    }
+    return locObjectArray.map((e) => {
+        return e.name + "(" + e.qty + ")"
+    }).join(", ")
+}
 
 export const apiEndpoint = "https://rhq-backend.herokuapp.com/api"
 

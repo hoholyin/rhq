@@ -5,7 +5,7 @@ import {
     generateCode, generateNextCashInIndexNumber,
     generateNextInvoiceNumber,
     generateTodayDate, isPrice, itemExists, naCategoryList, naDetailedList, samsungCategoryList,
-    samsungDetailedList
+    samsungDetailedList, toLocObjectArray, toLocString
 } from "./common";
 import tick from "./assets/tick.png";
 import cross from "./assets/cross.png";
@@ -13,7 +13,7 @@ import React, {useState} from "react";
 import "./submitOrderForm.css";
 import {radioSelection} from "./formComponents";
 import Loader from "./Loader";
-import {createRequestOptions, getRequest} from "./requestBuilder";
+import {createRequestOptions, getRequest, postRequest} from "./requestBuilder";
 
 const SubmitOrderForm = (props) => {
     const [customerName, setCustomerName] = useState("");
@@ -23,8 +23,8 @@ const SubmitOrderForm = (props) => {
     const [color, setColor] = useState("")
     const [desc, setDesc] = useState("")
     const [qty, setQty] = useState("1")
-    const [discount, setDiscount] = useState("$0.00")
-    const [status, setStatus] = useState("")
+    const [amount, setAmount] = useState("$0.00")
+    const [stamps, setStamps] = useState("$0.00")
     const [remarks, setRemarks] = useState("NA")
     const [tips, setTips] = useState("$0.00")
     const [bossName, setBossName] = useState("")
@@ -75,10 +75,8 @@ const SubmitOrderForm = (props) => {
     const [descList, setDescList] = useState([])
 
     const checkItemRow = async () => {
-        const code = generateCode(category, brand, detailed, color,desc)
-        const getItemRowRO = createRequestOptions('POST', {code: code})
-        const itemRowPromise = await fetch(apiEndpoint + '/inventoryRow', getItemRowRO)
-        const itemRowResult = await itemRowPromise.json()
+        const code = generateCode(category, brand, detailed, color, desc)
+        const itemRowResult = await postRequest(apiEndpoint + '/inventoryRow', {code: code})
         return itemRowResult.data.row
     }
 
@@ -127,17 +125,24 @@ const SubmitOrderForm = (props) => {
                 return
             }
 
-            setDiscount(discount === "$" ? "$0.00" : discount)
+            setAmount(amount === "$" ? "$0.00" : amount)
             setTips(tips === "$" ? "$0.00" : tips)
+            setStamps(stamps === "$" ? "$0.00" : stamps)
 
-            if (!isPrice(discount)) {
-                setWarning("Invalid discount!")
+            if (!isPrice(amount)) {
+                setWarning("Invalid amount!")
                 setSubmitting(false)
                 return
             }
 
             if (!isPrice(tips)) {
                 setWarning("Invalid tips!")
+                setSubmitting(false)
+                return
+            }
+
+            if (!isPrice(stamps)) {
+                setWarning("Invalid stamps!")
                 setSubmitting(false)
                 return
             }
@@ -160,52 +165,51 @@ const SubmitOrderForm = (props) => {
             }
             setItemExistCheckCorrect(1)
 
-            const getItemQtyRO = createRequestOptions('POST', {row: itemRow})
-            const itemQtyPromise = await fetch(apiEndpoint + '/inventoryQty', getItemQtyRO)
-            const itemQtyResult = await itemQtyPromise.json()
-            const itemQty = itemQtyResult.data
-            const stockIn = parseInt(itemQty.stockIn)
-            const stockOut = parseInt(itemQty.stockOut)
-            if (stockIn + stockOut <= 0) {
+            const currLocationRes = await postRequest(apiEndpoint + '/inventoryGetLoc', {row: itemRow})
+            const currLocation = toLocObjectArray(currLocationRes.data.inventoryLoc)
+            let inStock = false
+            currLocation.forEach((e) => {
+                if (e.name.toUpperCase() === bossName.toUpperCase()) {
+                    inStock = e.qty > 0
+                }
+            })
+            if (!inStock) {
                 setItemInStockCheckCorrect(2)
                 setSubmitting(false)
                 return
             }
             setItemInStockCheckCorrect(1)
-            const updateItemQtyRO = createRequestOptions('POST', {row: itemRow, newQty: stockOut - 1})
-            await fetch(apiEndpoint + '/inventoryUpdateQty', updateItemQtyRO)
+            let updatedCurrLocation = currLocation.map((e) => {
+                if (e.name.toUpperCase() === bossName.toUpperCase()) {
+                    return {
+                        name: e.name,
+                        qty: e.qty - qty
+                    }
+                }
+                return e
+            }).filter((e) => e.qty > 0)
+            const updatedCurrLocationString = toLocString(updatedCurrLocation)
+            await postRequest(apiEndpoint + '/inventoryUpdateLoc', {row: itemRow, location: updatedCurrLocationString})
             setUpdatingInventoryCheckCorrect(1)
 
             const getOrdersInfo = await getRequest(apiEndpoint + "/orders")
-            const ordersSize = parseInt(getOrdersInfo.data.size)
             const lastInvoiceNumber = getOrdersInfo.data.lastInvoiceNumber
-
-            const nextOrderIndex = ordersSize + 1
-            const nextOrderRow = nextOrderIndex + 1
 
             const currInvoiceNumber = generateNextInvoiceNumber(lastInvoiceNumber)
             const today = generateTodayDate()
 
             const order = {
-                row_number: nextOrderRow,
+                code: generateCode(category, brand, detailed, color, desc),
                 customer: customerName,
                 invoice_number: currInvoiceNumber,
                 invoice_date: today,
-                category: category,
-                brand: brand,
-                detailed: detailed,
-                color: color,
-                desc: desc,
                 qty: qty,
-                discount: discount,
-                status: status,
-                remarks: remarks,
+                amt: amount,
                 tips: tips,
+                stamps: stamps,
+                remarks: remarks,
             }
-            const createOrderRO = createRequestOptions('POST', order)
-            const totalAmountPromise = await fetch(apiEndpoint + '/order', createOrderRO)
-            const totalAmountResult = await totalAmountPromise.json()
-            const totalAmount = totalAmountResult.data.totalAmount
+            await postRequest(apiEndpoint + '/order', order)
             setSubmittingOrderCheckCorrect(1)
 
             if (tips !== "$0.00") {
@@ -214,12 +218,11 @@ const SubmitOrderForm = (props) => {
                     invoice_number: currInvoiceNumber,
                     tipAmount: tips
                 }
-                const addTipsRO = createRequestOptions('POST', tipsObject)
-                await fetch(apiEndpoint + '/addTips', addTipsRO)
+                await postRequest(apiEndpoint + '/addTips', tipsObject)
             }
 
             const getLastCashIn = await getRequest(apiEndpoint + "/cce")
-            const lastCashInIndex = parseInt(getLastCashIn.data.lastCashInIndex)
+            const lastCashInIndex = getLastCashIn.data.lastCashInIndex
 
             const currCashInIndex = generateNextCashInIndexNumber(lastCashInIndex)
             const cashInDescription = "Sales - " + currInvoiceNumber
@@ -228,33 +231,12 @@ const SubmitOrderForm = (props) => {
                 indexNumber: currCashInIndex,
                 date: today,
                 description: cashInDescription,
-                amount: addPrice(totalAmount, tips),
-                remarks: bossName
+                amount: addPrice(amount, tips),
             }
-            const createLastCashInRO = createRequestOptions('POST', createLastCashInObject)
-            await fetch(apiEndpoint + '/cce', createLastCashInRO)
+            await postRequest(apiEndpoint + '/cce', createLastCashInObject)
             setUpdatingAccountsCheckCorrect(1)
 
-            const createInvoiceObject = {
-                customer: customerName,
-                invoice_number: currInvoiceNumber,
-                date: today,
-                item: {
-                    desc: generateCode(category, brand, detailed, color, desc),
-                    qty: qty
-                }
-            }
-            const createInvoiceRO = createRequestOptions('POST', createInvoiceObject)
-            const invoicePromise = await fetch(apiEndpoint + '/invoice', createInvoiceRO)
-            const invoiceResult = await invoicePromise.json()
-            const invoiceUrl = invoiceResult.data.invoice_url
             setSubmitting(false)
-
-            const invoiceTab = window.open(invoiceUrl, '_blank', 'noopener,noreferrer')
-            if (invoiceTab) {
-                invoiceTab.opener = null
-            }
-
             props.navigate("orderSubmitted")
         } catch (err) {
             for (const element in indicators) {
@@ -273,7 +255,8 @@ const SubmitOrderForm = (props) => {
             && detailed !== ""
             && color !== ""
             && desc !== ""
-            && status !== ""
+            && amount !== ""
+            && stamps !== ""
             && bossName !== ""
             && submitting === false
     }
@@ -388,10 +371,10 @@ const SubmitOrderForm = (props) => {
             {radioSelection("desc", descList, setDesc)}
             <span className="form-label">Quantity</span>
             <input className="input-box" type="number" value={qty} onChange={e => setQty(e.target.value)}/>
-            <span className="form-label">Discount</span>
-            <input className="input-box" type="text" value={discount} onChange={e => updatePrice(e.target.value, setDiscount)}/>
-            <span className="form-label">Status</span>
-            {radioSelection("status", ["PENDING", "PAID"], setStatus)}
+            <span className="form-label">Net Amount (After discount)</span>
+            <input className="input-box" type="text" value={amount} onChange={e => updatePrice(e.target.value, setAmount)}/>
+            <span className="form-label">Stamp value</span>
+            <input className="input-box" type="text" value={stamps} onChange={e => updatePrice(e.target.value, setStamps)}/>
             <span className="form-label">Remarks</span>
             <input className="input-box" type="text" value={remarks} onChange={e => setRemarks(e.target.value)}/>
             <span className="form-label">Tips</span>
