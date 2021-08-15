@@ -1,7 +1,18 @@
 
+@media (max-width: 500px) {
+    .form {
+        background-color: #282c34;
+        border-radius: 5px;
+        display: flex;
+        flex-direction: column;
+        padding: 20px;
+        margin-bottom: 40px;
+        margin-left: 12px;
+        margin-right: 12px;
+    }
+}
 .form {
     background-color: #282c34;
-    width: 50vh;
     border-radius: 5px;
     display: flex;
     flex-direction: column;
