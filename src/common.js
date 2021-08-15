@@ -41,7 +41,7 @@ export const generateCode = (category, brand, detailed, color, desc) => {
 }
 
 export const itemExists = (row) => {
-    return row >= 4
+    return row >= 2
 }
 
 export const isPrice = (price) => {
