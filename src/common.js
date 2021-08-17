@@ -110,7 +110,9 @@ export const appleDetailedList = [
     "11",
     "11 Pro",
     "11 Pro max",
-    "X/XS"
+    "X/XS",
+    "38mm-40mm",
+    "40mm-42mm",
 ]
 export const appleCategoryList = [
     "Phone case",
@@ -143,6 +145,7 @@ export const naCategoryList = [
 export const defaultColorList = [
     "Azure",
     "Black",
+    "Silver",
     "White",
     "Red",
     "Pink",
@@ -157,5 +160,6 @@ export const defaultDescList = [
     "Matt",
     "Ultra thick",
     "Camera cover",
+    "Milanese loop",
     "NA"
 ]
