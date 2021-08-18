@@ -117,7 +117,8 @@ export const appleDetailedList = [
 export const appleCategoryList = [
     "Phone case",
     "Airpods case",
-    "Screen protector"
+    "Screen protector",
+    "Watch Strap"
 ]
 
 export const samsungDetailedList = [
