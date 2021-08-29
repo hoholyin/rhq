@@ -170,7 +170,7 @@ const SubmitOrderForm = (props) => {
             let inStock = false
             currLocation.forEach((e) => {
                 if (e.name.toUpperCase() === bossName.toUpperCase()) {
-                    inStock = e.qty > 0
+                    inStock = e.qty > qty
                 }
             })
             if (!inStock) {
@@ -197,6 +197,7 @@ const SubmitOrderForm = (props) => {
 
             const currInvoiceNumber = generateNextInvoiceNumber(lastInvoiceNumber)
             const today = generateTodayDate()
+            console.log(qty);
 
             const order = {
                 code: generateCode(category, brand, detailed, color, desc),
