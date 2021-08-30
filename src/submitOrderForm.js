@@ -234,7 +234,7 @@ const SubmitOrderForm = (props) => {
                 description: cashInDescription,
                 amount: addPrice(amount, tips),
             }
-            await postRequest(apiEndpoint + '/cce', createLastCashInObject)
+            await postRequest(apiEndpoint + '/cce_in', createLastCashInObject)
             setUpdatingAccountsCheckCorrect(1)
 
             setSubmitting(false)
