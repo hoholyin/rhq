@@ -1,5 +1,5 @@
-import logo from './assets/logo_transparent.png';
-import './Home.css';
+import logo from '../assets/logo_transparent.png';
+import '../Home.css';
 import React from "react";
 import "./orderSubmittedPage.css";
 

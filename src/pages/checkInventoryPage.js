@@ -1,12 +1,12 @@
-import logo from "./assets/logo_transparent.png";
+import logo from "../assets/logo_transparent.png";
 import InventoryList from "./InventoryList";
-import {apiEndpoint} from "./common";
-import {getRequest} from "./requestBuilder";
+import {apiEndpoint} from "../common";
+import {getRequest} from "../requestBuilder";
 import React, {useEffect, useState} from "react";
-import Loader from "./Loader";
+import Loader from "../Loader";
 import "./checkInventoryPage.css"
-import back from "./assets/back.png";
-import refresh from "./assets/refresh.png";
+import back from "../assets/back.png";
+import refresh from "../assets/refresh.png";
 
 const CheckInventoryPage = (props) => {
     const [inventoryList, setInventoryList] = useState([]);

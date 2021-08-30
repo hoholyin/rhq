@@ -1,3 +1,5 @@
+import {createRequestOptions} from "./requestBuilder";
+
 export const generateTodayDate = () => {
     const year = new Date().getFullYear().toString()
     const month = (new Date().getMonth() + 1).toString()
@@ -26,14 +28,14 @@ export const generateNextInvoiceNumber = (lastInvoiceNumber) => {
     return currYear + currMonth + "001"
 }
 
-export const generateNextCashInIndexNumber = (lastCashInIndex) => {
+export const generateNextCashInOutIndexNumber = (lastCashInIndex) => {
     let lastCashInIndexNumber = parseInt(lastCashInIndex.substring(2))
     lastCashInIndexNumber += 1
     lastCashInIndexNumber = lastCashInIndexNumber.toString()
     while (lastCashInIndexNumber.length < 3) {
         lastCashInIndexNumber = "0" + lastCashInIndexNumber
     }
-    return "CI" + lastCashInIndexNumber
+    return lastCashInIndex.substring(0, 2) + lastCashInIndexNumber
 }
 
 export const generateCode = (category, brand, detailed, color, desc) => {

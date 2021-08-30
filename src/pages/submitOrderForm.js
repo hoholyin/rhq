@@ -2,18 +2,18 @@ import {
     addPrice,
     apiEndpoint, appleCategoryList,
     appleDetailedList, defaultColorList, defaultDescList,
-    generateCode, generateNextCashInIndexNumber,
+    generateCode, generateNextCashInOutIndexNumber,
     generateNextInvoiceNumber,
     generateTodayDate, isPrice, itemExists, naCategoryList, naDetailedList, samsungCategoryList,
     samsungDetailedList, toLocObjectArray, toLocString
-} from "./common";
-import tick from "./assets/tick.png";
-import cross from "./assets/cross.png";
+} from "../common";
+import tick from "../assets/tick.png";
+import cross from "../assets/cross.png";
 import React, {useState} from "react";
 import "./submitOrderForm.css";
 import {radioSelection} from "./formComponents";
-import Loader from "./Loader";
-import {createRequestOptions, getRequest, postRequest} from "./requestBuilder";
+import Loader from "../Loader";
+import {createRequestOptions, getRequest, postRequest} from "../requestBuilder";
 
 const SubmitOrderForm = (props) => {
     const [customerName, setCustomerName] = useState("");
@@ -197,7 +197,6 @@ const SubmitOrderForm = (props) => {
 
             const currInvoiceNumber = generateNextInvoiceNumber(lastInvoiceNumber)
             const today = generateTodayDate()
-            console.log(qty);
 
             const order = {
                 code: generateCode(category, brand, detailed, color, desc),
@@ -225,7 +224,7 @@ const SubmitOrderForm = (props) => {
             const getLastCashIn = await getRequest(apiEndpoint + "/cce")
             const lastCashInIndex = getLastCashIn.data.lastCashInIndex
 
-            const currCashInIndex = generateNextCashInIndexNumber(lastCashInIndex)
+            const currCashInIndex = generateNextCashInOutIndexNumber(lastCashInIndex)
             const cashInDescription = "Sales - " + currInvoiceNumber
 
             const createLastCashInObject = {

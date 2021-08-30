@@ -1,8 +1,9 @@
 import React, {useState} from "react";
 import Home from "./Home";
-import SubmitOrderPage from "./submitOrderPage";
-import OrderSubmittedPage from "./orderSubmittedPage";
-import CheckInventoryPage from "./checkInventoryPage";
+import SubmitOrderPage from "./pages/submitOrderPage";
+import OrderSubmittedPage from "./pages/orderSubmittedPage";
+import CheckInventoryPage from "./pages/checkInventoryPage";
+import AddExpensesPage from "./pages/addExpensesPage";
 
 function App() {
     const setPage = (page) => {
@@ -20,6 +21,10 @@ function App() {
             case "submitOrder":
                 return (
                     <SubmitOrderPage navigate={setCurrentPage}/>
+                )
+            case "addExpenses":
+                return (
+                    <AddExpensesPage navigate={setCurrentPage}/>
                 )
             case "orderSubmitted":
                 return (
