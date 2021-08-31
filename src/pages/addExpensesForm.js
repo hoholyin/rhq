@@ -123,7 +123,10 @@ const AddExpensesForm = (props) => {
             await postRequest(apiEndpoint + '/expense', expense)
 
             const lastCceIndexData = await getRequest(apiEndpoint + "/cce_out")
-            const lastCashOutIndex = lastCceIndexData.data.lastCashOutIndex
+            let lastCashOutIndex = lastCceIndexData.data.lastCashOutIndex
+            if (!lastCashOutIndex.startsWith("CO")) {
+                lastCashOutIndex = "CO000"
+            }
             const lastCashOutRow = lastCceIndexData.data.row
             const currCashOutIndex = generateNextCashInOutIndexNumber(lastCashOutIndex)
             const currCashOutRow = parseInt(lastCashOutRow) + 1
