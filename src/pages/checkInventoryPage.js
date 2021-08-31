@@ -12,14 +12,15 @@ const CheckInventoryPage = (props) => {
     const [inventoryList, setInventoryList] = useState([]);
     const [allInventories, setAllInventories] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
+    const [query, setQuery] = useState("");
 
     useEffect(() => {
         refreshInventory();
     }, [])
 
     const search = (searchQuery) => {
+        setQuery(searchQuery)
         const allWords = searchQuery.split(" ")
-        console.log(allWords)
         const filteredItems = allInventories.filter((e) => {
             for (const word of allWords) {
                 if (!e.code.toLowerCase().includes(word.toLowerCase())) {
@@ -45,6 +46,7 @@ const CheckInventoryPage = (props) => {
         })
         setAllInventories(allInventories)
         setInventoryList(allInventories)
+        search(query)
         setIsLoading(false)
     }
 
