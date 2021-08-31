@@ -221,17 +221,23 @@ const SubmitOrderForm = (props) => {
                 await postRequest(apiEndpoint + '/addTips', tipsObject)
             }
 
-            const getLastCashIn = await getRequest(apiEndpoint + "/cce")
-            const lastCashInIndex = getLastCashIn.data.lastCashInIndex
+            const getLastCashIn = await getRequest(apiEndpoint + "/cce_in")
+            let lastCashInIndex = getLastCashIn.data.lastCashInIndex
+            if (!lastCashInIndex.startsWith("CO")) {
+                lastCashInIndex = "CO000"
+            }
+            const lastCashInRow = getLastCashIn.data.row
 
             const currCashInIndex = generateNextCashInOutIndexNumber(lastCashInIndex)
             const cashInDescription = "Sales - " + currInvoiceNumber
+            const currCashInRow = parseInt(lastCashInRow) + 1
 
             const createLastCashInObject = {
                 indexNumber: currCashInIndex,
                 date: today,
                 description: cashInDescription,
                 amount: addPrice(amount, tips),
+                row: currCashInRow
             }
             await postRequest(apiEndpoint + '/cce_in', createLastCashInObject)
             setUpdatingAccountsCheckCorrect(1)
