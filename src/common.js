@@ -38,10 +38,6 @@ export const generateNextCashInOutIndexNumber = (lastCashInIndex) => {
     return lastCashInIndex.substring(0, 2) + lastCashInIndexNumber
 }
 
-export const generateCode = (category, brand, detailed, color, desc) => {
-    return category + brand + detailed + color + desc
-}
-
 export const itemExists = (row) => {
     return row >= 2
 }
@@ -166,3 +162,25 @@ export const defaultDescList = [
     "Milanese loop",
     "NA"
 ]
+
+export const isBossCorrect = async (bossName) => {
+    const getBossNamesRO = createRequestOptions('GET')
+    const bossNamesPromise = await fetch(apiEndpoint + '/bossNames', getBossNamesRO)
+    const bossNamesResult = await bossNamesPromise.json()
+    const bossNames = bossNamesResult.data.bossNames
+    for (const index in bossNames) {
+        if (bossNames[index].toUpperCase() === bossName.toUpperCase()) {
+            return true
+        }
+    }
+    return false
+}
+
+export const updatePrice = (price, callback) => {
+    if (!price.startsWith("$")) {
+        callback("$")
+        return
+    }
+    callback(price)
+}
+

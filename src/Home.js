@@ -3,7 +3,7 @@ import React from "react";
 
 const Home = (props) => {
     return (
-        <div className="App-header">
+        <div className="App">
             <img src={logo} className="App-logo" alt="logo"/>
             <div className="button" onClick={() => props.navigate("checkInventory")}>
                 Check inventory

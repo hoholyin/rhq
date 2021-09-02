@@ -1,33 +1,31 @@
 import {
     addPrice,
-    apiEndpoint, appleCategoryList,
-    appleDetailedList, defaultColorList, defaultDescList,
-    generateCode, generateNextCashInOutIndexNumber,
+    apiEndpoint,
+    generateNextCashInOutIndexNumber,
     generateNextInvoiceNumber,
-    generateTodayDate, isPrice, itemExists, naCategoryList, naDetailedList, samsungCategoryList,
-    samsungDetailedList, toLocObjectArray, toLocString
+    generateTodayDate, isBossCorrect, isPrice, itemExists,
+    toLocObjectArray, toLocString, updatePrice
 } from "../common";
 import tick from "../assets/tick.png";
 import cross from "../assets/cross.png";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import "./submitOrderForm.css";
-import {radioSelection} from "./formComponents";
 import Loader from "../Loader";
-import {createRequestOptions, getRequest, postRequest} from "../requestBuilder";
+import {getRequest, postRequest} from "../requestBuilder";
 
 const SubmitOrderForm = (props) => {
     const [customerName, setCustomerName] = useState("");
-    const [category, setCategory] = useState("")
-    const [brand, setBrand] = useState("")
-    const [detailed, setDetailed] = useState("")
-    const [color, setColor] = useState("")
-    const [desc, setDesc] = useState("")
     const [qty, setQty] = useState("1")
     const [amount, setAmount] = useState("$0.00")
     const [stamps, setStamps] = useState("$0.00")
     const [remarks, setRemarks] = useState("NA")
     const [tips, setTips] = useState("$0.00")
     const [bossName, setBossName] = useState("")
+    const [selectedCode, setSelectedCode] = useState("")
+    const [searchQuery, setSearchQuery] = useState("")
+    const [inventoryList, setInventoryList] = useState([]);
+    const [allInventories, setAllInventories] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
 
     const [isStatusMessagesVisible, setStatusMessagesVisible] = useState(false)
     const [bossCheckCorrect, setBossCheckCorrect] = useState(0)
@@ -69,14 +67,27 @@ const SubmitOrderForm = (props) => {
     const [isWarningMessageVisible, setWarningMessageVisible] = useState(false)
     const [warningMessage, setWarningMessage] = useState("")
 
-    const [detailedList, setDetailedList] = useState([])
-    const [categoryList, setCategoryList] = useState([])
-    const [colorList, setColorList] = useState([])
-    const [descList, setDescList] = useState([])
+    useEffect(() => {
+        refreshInventory()
+    }, [])
+
+    const refreshInventory = async () => {
+        setIsLoading(true)
+        const inventoryListObject = await getRequest(apiEndpoint + '/inventory')
+        const allInventories = inventoryListObject.data.allInventories
+        allInventories.map((e) => {
+            e.name = e.code
+            e.name = e.name.replaceAll("NA", "")
+            e.name = e.name.replaceAll("Phone accessories", "")
+            return e
+        })
+        setAllInventories(allInventories)
+        setInventoryList(allInventories)
+        setIsLoading(false)
+    }
 
     const checkItemRow = async () => {
-        const code = generateCode(category, brand, detailed, color, desc)
-        const itemRowResult = await postRequest(apiEndpoint + '/inventoryRow', {code: code})
+        const itemRowResult = await postRequest(apiEndpoint + '/inventoryRow', {code: selectedCode})
         return itemRowResult.data.row
     }
 
@@ -98,20 +109,6 @@ const SubmitOrderForm = (props) => {
         setUpdatingInventoryCheckCorrect(0)
         setSubmittingOrderCheckCorrect(0)
         setUpdatingAccountsCheckCorrect(0)
-    }
-
-    const isBossCorrect = async () => {
-        setBossName(bossName.toUpperCase())
-        const getBossNamesRO = createRequestOptions('GET')
-        const bossNamesPromise = await fetch(apiEndpoint + '/bossNames', getBossNamesRO)
-        const bossNamesResult = await bossNamesPromise.json()
-        const bossNames = bossNamesResult.data.bossNames
-        for (const index in bossNames) {
-           if (bossNames[index].toUpperCase() === bossName.toUpperCase()) {
-               return true
-           }
-        }
-        return false
     }
 
     const submitOrder = async () => {
@@ -149,7 +146,7 @@ const SubmitOrderForm = (props) => {
             resetStatusMessages()
             setStatusMessagesVisible(true)
 
-            const correctBoss = await isBossCorrect()
+            const correctBoss = await isBossCorrect(bossName)
             if (!correctBoss) {
                 setBossCheckCorrect(2)
                 setSubmitting(false)
@@ -170,7 +167,7 @@ const SubmitOrderForm = (props) => {
             let inStock = false
             currLocation.forEach((e) => {
                 if (e.name.toUpperCase() === bossName.toUpperCase()) {
-                    inStock = e.qty > qty
+                    inStock = e.qty >= qty
                 }
             })
             if (!inStock) {
@@ -199,7 +196,7 @@ const SubmitOrderForm = (props) => {
             const today = generateTodayDate()
 
             const order = {
-                code: generateCode(category, brand, detailed, color, desc),
+                code: selectedCode,
                 customer: customerName,
                 invoice_number: currInvoiceNumber,
                 invoice_date: today,
@@ -223,8 +220,8 @@ const SubmitOrderForm = (props) => {
 
             const getLastCashIn = await getRequest(apiEndpoint + "/cce_in")
             let lastCashInIndex = getLastCashIn.data.lastCashInIndex
-            if (!lastCashInIndex.startsWith("CO")) {
-                lastCashInIndex = "CO000"
+            if (!lastCashInIndex.startsWith("CI")) {
+                lastCashInIndex = "CI000"
             }
             const lastCashInRow = getLastCashIn.data.row
 
@@ -256,53 +253,10 @@ const SubmitOrderForm = (props) => {
 
     const canSubmit = () => {
         return customerName !== ""
-            && brand !== ""
-            && category !== ""
-            && detailed !== ""
-            && color !== ""
-            && desc !== ""
             && amount !== ""
             && stamps !== ""
             && bossName !== ""
             && submitting === false
-    }
-
-    const updateBrand = (brand) => {
-        setCategoryList(["NA"])
-        setDetailedList(["NA"])
-        setColorList(defaultColorList)
-        setDescList(["NA"])
-        switch (brand) {
-            case "Apple":
-                setDetailedList(appleDetailedList)
-                setCategoryList(appleCategoryList)
-                break;
-            case "Samsung":
-                setDetailedList(samsungDetailedList)
-                setCategoryList(samsungCategoryList)
-                break;
-            case "NA":
-                setDetailedList(naDetailedList)
-                setCategoryList(naCategoryList)
-                break;
-            default:
-                break;
-        }
-        setBrand(brand)
-    }
-
-    const updateCategory = (category) => {
-        category === "Screen protector" ? setColorList(["NA"]) : setColorList(defaultColorList)
-        category === "Phone case" ? setDescList(defaultDescList) : setDescList(["NA"])
-        setCategory(category)
-    }
-
-    const updatePrice = (price, callback) => {
-        if (!price.startsWith("$")) {
-            callback("$")
-            return
-        }
-        callback(price)
     }
 
     const statusMessageComponent = () => {
@@ -360,21 +314,65 @@ const SubmitOrderForm = (props) => {
         )
     }
 
-    return (
+    const search = (query) => {
+        setSearchQuery(query)
+        const allWords = searchQuery.split(" ")
+        const filteredItems = allInventories.filter((e) => {
+            for (const word of allWords) {
+                if (!e.code.toLowerCase().includes(word.toLowerCase())) {
+                    return false
+                }
+            }
+            return true
+        })
+        setInventoryList(filteredItems)
+    }
+
+    const selectedCodeModal = () => {
+        let processedWord = "";
+        for (let i = 0; i < selectedCode.length; i++) {
+            if (processedWord.length === 0 || selectedCode.length === i + 1) {
+                processedWord += selectedCode[i]
+                continue;
+            }
+            const lastChar = processedWord.slice(-1);
+            const nextChar = selectedCode[i];
+            if (lastChar.match(/[0-9|a-z]/) && nextChar.match(/[A-Z]/)) {
+                processedWord += "\n"
+            }
+            processedWord += selectedCode[i]
+        }
+        return (
+            <div className="selected-code-modal">
+                <div className="modal-padding"></div>
+                <span className="selected-item-name">{processedWord}</span>
+                <div className="remove-selection" onClick={() => setSelectedCode("")}>
+                    <img src={cross} className="remove-selection-icon" alt="logo"/>
+                </div>
+            </div>
+        )
+    }
+
+    const selectItem = (code) => {
+        setSelectedCode(code)
+        setSearchQuery("")
+    }
+
+    return ( isLoading ? <Loader /> : (
         <div className="form">
             <span className="form-header">Order Form</span>
             <span className="form-label">Customer's name</span>
             <input className="input-box" type="text" onChange={e => setCustomerName(e.target.value)}/>
-            <span className="form-label">Brand</span>
-            {radioSelection("brand", ["Apple", "Samsung", "NA"], updateBrand)}
-            <span className="form-label">Category</span>
-            {radioSelection("category", categoryList, updateCategory)}
-            <span className="form-label">Detailed</span>
-            {radioSelection("detailed", detailedList, setDetailed)}
-            <span className="form-label">Colour</span>
-            {radioSelection("color", colorList, setColor)}
-            <span className="form-label">Description</span>
-            {radioSelection("desc", descList, setDesc)}
+            <span className="form-label">Item</span>
+            {selectedCode === "" && <input className="input-box" type="text" onChange={e => search(e.target.value)}/>}
+            {selectedCode !== "" && selectedCodeModal()}
+            {searchQuery !== "" && inventoryList.map((e) => {
+                return (
+                    <div className="search-item-row" onClick={() => selectItem(e.code)}>
+                        <span className="search-item-name">{e.name}</span>
+                    </div>
+                )
+            })}
             <span className="form-label">Quantity</span>
             <input className="input-box" type="number" value={qty} onChange={e => setQty(e.target.value)}/>
             <span className="form-label">Net Amount (After discount)</span>
@@ -395,7 +393,7 @@ const SubmitOrderForm = (props) => {
                     ? <Loader />
                     : inactiveButton()}
         </div>
-    )
+))
 }
 
 export default SubmitOrderForm;

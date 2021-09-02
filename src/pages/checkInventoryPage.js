@@ -16,7 +16,7 @@ const CheckInventoryPage = (props) => {
 
     useEffect(() => {
         refreshInventory();
-    }, [])
+    })
 
     const search = (searchQuery) => {
         setQuery(searchQuery)

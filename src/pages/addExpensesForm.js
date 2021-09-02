@@ -1,18 +1,13 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import {
-    addPrice,
-    apiEndpoint, appleCategoryList, appleDetailedList, defaultColorList, defaultDescList,
-    generateCode, generateNextCashInIndexNumber, generateNextCashInOutIndexNumber,
-    generateNextInvoiceNumber, generateTodayDate,
-    isPrice,
-    itemExists, naCategoryList, naDetailedList, samsungCategoryList, samsungDetailedList,
-    toLocObjectArray,
-    toLocString
+    apiEndpoint,
+    generateNextCashInOutIndexNumber,
+    generateTodayDate, isBossCorrect,
+    isPrice, updatePrice,
 } from "../common";
-import {createRequestOptions, getRequest, postRequest} from "../requestBuilder";
+import {getRequest, postRequest} from "../requestBuilder";
 import tick from "../assets/tick.png";
 import cross from "../assets/cross.png";
-import {radioSelection} from "./formComponents";
 import Loader from "../Loader";
 import "./addExpensesForm.css"
 
@@ -77,20 +72,6 @@ const AddExpensesForm = (props) => {
         setDate(date)
     }
 
-    const isBossCorrect = async () => {
-        setBossName(bossName.toUpperCase())
-        const getBossNamesRO = createRequestOptions('GET')
-        const bossNamesPromise = await fetch(apiEndpoint + '/bossNames', getBossNamesRO)
-        const bossNamesResult = await bossNamesPromise.json()
-        const bossNames = bossNamesResult.data.bossNames
-        for (const index in bossNames) {
-            if (bossNames[index].toUpperCase() === bossName.toUpperCase()) {
-                return true
-            }
-        }
-        return false
-    }
-
     const submitExpense = async () => {
         try {
             setStatusMessagesVisible(false)
@@ -104,7 +85,7 @@ const AddExpensesForm = (props) => {
             resetStatusMessages()
             setStatusMessagesVisible(true)
 
-            const correctBoss = await isBossCorrect()
+            const correctBoss = await isBossCorrect(bossName)
             if (!correctBoss) {
                 setBossCheckCorrect(2)
                 setSubmitting(false)
@@ -179,14 +160,6 @@ const AddExpensesForm = (props) => {
         return (
             <div className="form-button" onClick={submitExpense}>Submit Expense</div>
         )
-    }
-
-    const updatePrice = (price, callback) => {
-        if (!price.startsWith("$")) {
-            callback("$")
-            return
-        }
-        callback(price)
     }
 
     const statusMessageComponent = () => {
