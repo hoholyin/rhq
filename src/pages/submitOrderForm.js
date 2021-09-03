@@ -364,7 +364,7 @@ const SubmitOrderForm = (props) => {
             <span className="form-label">Customer's name</span>
             <input className="input-box" type="text" onChange={e => setCustomerName(e.target.value)}/>
             <span className="form-label">Item</span>
-            {selectedCode === "" && <input className="input-box" type="text" onChange={e => search(e.target.value)}/>}
+            {selectedCode === "" && <input className="input-box" placeholder="Start typing to search..." type="text" onChange={e => search(e.target.value)}/>}
             {selectedCode !== "" && selectedCodeModal()}
             {searchQuery !== "" && inventoryList.map((e) => {
                 return (
