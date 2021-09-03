@@ -346,15 +346,21 @@ const SubmitOrderForm = (props) => {
             <div className="selected-code-modal">
                 <div className="modal-padding"></div>
                 <span className="selected-item-name">{processedWord}</span>
-                <div className="remove-selection" onClick={() => setSelectedCode("")}>
+                <div className="remove-selection" onClick={() => unselectItem()}>
                     <img src={cross} className="remove-selection-icon" alt="logo"/>
                 </div>
             </div>
         )
     }
 
-    const selectItem = (code) => {
-        setSelectedCode(code)
+    const unselectItem = () => {
+        setSelectedCode("")
+        updatePrice("$0.00", setAmount)
+    }
+
+    const selectItem = (item) => {
+        setSelectedCode(item.code)
+        updatePrice(item.price, setAmount)
         setSearchQuery("")
     }
 
@@ -368,7 +374,7 @@ const SubmitOrderForm = (props) => {
             {selectedCode !== "" && selectedCodeModal()}
             {searchQuery !== "" && inventoryList.map((e) => {
                 return (
-                    <div className="search-item-row" onClick={() => selectItem(e.code)}>
+                    <div className="search-item-row" onClick={() => selectItem(e)}>
                         <span className="search-item-name">{e.name}</span>
                     </div>
                 )
