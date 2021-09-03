@@ -52,25 +52,23 @@ const CheckInventoryPage = (props) => {
 
     return (
         <div className="App">
-            <header className="App-header">
-                <div className="button-containers">
-                    <div className="back-button-container" onClick={() => props.navigate("")}>
-                        <img src={back} className="back-button interactive" alt="back"/>
-                    </div>
-                    <div className="refresh-button-container" onClick={refreshInventory}>
-                        <img src={refresh} className="refresh-button interactive" alt="refresh"/>
-                    </div>
+            <div className="button-containers">
+                <div className="back-button-container" onClick={() => props.navigate("")}>
+                    <img src={back} className="back-button interactive" alt="back"/>
                 </div>
-                <div className="logo-container interactive" onClick={() => props.navigate("")}>
-                    <img src={logo} className="submit-order-app-logo" alt="logo"/>
+                <div className="refresh-button-container" onClick={refreshInventory}>
+                    <img src={refresh} className="refresh-button interactive" alt="refresh"/>
                 </div>
-                <input className="input-box" type="text" onChange={e => search(e.target.value)}/>
-                <div className="inventory-list-container">
-                    {isLoading
-                        ? <Loader />
-                        :<InventoryList inventoryList={inventoryList}/>}
-                </div>
-            </header>
+            </div>
+            <div className="logo-container interactive" onClick={() => props.navigate("")}>
+                <img src={logo} className="submit-order-app-logo" alt="logo"/>
+            </div>
+            <input className="input-box" type="text" onChange={e => search(e.target.value)}/>
+            <div className="inventory-list-container">
+                {isLoading
+                    ? <Loader />
+                    :<InventoryList inventoryList={inventoryList}/>}
+            </div>
         </div>
     )
 }
