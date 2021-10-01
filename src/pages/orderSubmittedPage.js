@@ -10,7 +10,7 @@ const OrderSubmittedPage = (props) => {
                 <div onClick={() => props.navigate("")}>
                     <img src={logo} className="submit-order-app-logo" alt="logo"/>
                 </div>
-                <span className="submitted-message">Order submitted!</span>
+                <span className="submitted-message">Submitted!</span>
                 <div onClick={() => props.navigate("")}>
                     <div className="button">Back to Homepage</div>
                 </div>
