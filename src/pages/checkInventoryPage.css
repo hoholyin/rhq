@@ -35,3 +35,51 @@
     width: 30vmin;
     padding-bottom: 5px;
 }
+
+.selected-code-heading {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    justify-content: space-between;
+    padding-bottom: 5px;
+}
+
+.selected-code-modal {
+    background-color: #282c34;
+    display: flex;
+    flex-direction: column;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.selected-item-name {
+    font-size: 18px;
+}
+
+.remove-selection {
+    border-color: #04aa6d;
+    border-width: 2px;
+    padding-top: 3px;
+}
+
+.indicator-column {
+    display: flex;
+    flex-direction: column;
+    padding-right: 10px;
+}
+
+.indicator-header {
+    font-size: 14px;
+    padding-bottom: 5px;
+}
+
+.indicator-container {
+    display: flex;
+    flex-direction: row;
+}
+
+.indicator-value {
+    font-size: 18px;
+    font-family: Lato-Bold;
+}

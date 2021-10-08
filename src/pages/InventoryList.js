@@ -15,7 +15,7 @@ const InventoryList = (props) => {
         <div className="inventory-list">
             {props.inventoryList.map((e) => {
                 return (
-                    <div className="inventory-list-row">
+                    <div className="inventory-list-row" onClick={() => props.elementOnClick(e.code)}>
                         <div className="inventory-code">
                             {e.name}
                         </div>
