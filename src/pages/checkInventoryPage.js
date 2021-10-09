@@ -92,10 +92,10 @@ const CheckInventoryPage = (props) => {
 
     const selectedCodeModal = () => {
         return (
-            <div className="selected-code-modal">
-                <div className="selected-code-heading">
-                    <span className="selected-item-name">{selectedCode}</span>
-                    <div className="remove-selection" onClick={() => unselectItem()}>
+            <div className="inv-selected-code-modal">
+                <div className="inv-selected-code-heading">
+                    <span className="inv-selected-item-name">{selectedCode}</span>
+                    <div className="inv-remove-selection" onClick={() => unselectItem()}>
                         <img src={cross} className="remove-selection-icon" alt="logo"/>
                     </div>
                 </div>
