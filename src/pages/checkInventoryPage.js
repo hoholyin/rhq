@@ -24,6 +24,9 @@ const CheckInventoryPage = (props) => {
 
     const search = (searchQuery) => {
         setQuery(searchQuery)
+        if (searchQuery == "") {
+            return
+        }
         const allWords = searchQuery.split(" ")
         const filteredItems = allInventories.filter((e) => {
             for (const word of allWords) {
@@ -51,6 +54,7 @@ const CheckInventoryPage = (props) => {
         setAllInventories(allInventories)
         setInventoryList(allInventories)
         setIsLoading(false)
+        search(query)
     }
 
     const selectCode = async (code) => {
