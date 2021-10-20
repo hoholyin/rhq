@@ -8,6 +8,9 @@ const Home = (props) => {
             <div className="button" onClick={() => props.navigate("checkInventory")}>
                 Check inventory
             </div>
+            <div className="button" onClick={() => props.navigate("pendingOrders")}>
+                Pending Orders
+            </div>
             <div className="button" onClick={() => props.navigate("submitOrder")}>
                 Submit an Order
             </div>

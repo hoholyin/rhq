@@ -1,0 +1,73 @@
+@media (max-width: 500px) {
+    .pending-order-code {
+        font-size: 5px;
+    }
+    .pending-order-name {
+        font-size: 18px;
+    }
+}
+
+.pending-orders-list {
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.pending-orders-list-row {
+    display: flex;
+    flex-direction: column;
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 5px;
+    padding: 10px;
+    border-radius: 5px;
+    justify-content: center;
+    padding-bottom: 8px;
+    background-color: #282c34;
+    border-width: 2px;
+    border-style: solid;
+    border-color: #282c34;
+}
+
+.pending-orders-list-row-selected {
+    display: flex;
+    flex-direction: column;
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 5px;
+    padding: 10px;
+    border-radius: 5px;
+    justify-content: center;
+    padding-bottom: 8px;
+    background-color: #282c34;
+    border-width: 2px;
+    border-style: solid;
+    border-color: #04AA6D;
+    font-family: Lato-Bold;
+}
+
+.pending-order-code {
+    font-size: 18px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    padding-bottom: 5px;
+    color: #04AA6D;
+}
+
+.pending-order-name {
+    font-size: 18px;
+    padding-right: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+}
+
+.pending-orders-list-row:hover {
+    cursor: pointer;
+    border-color: #04aa6d;
+}
+
+.pending-orders-list-row-selected:hover {
+    cursor: pointer;
+    border-color: #282c34;
+}

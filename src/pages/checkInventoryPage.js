@@ -1,6 +1,6 @@
 import logo from "../assets/logo_transparent.png";
 import InventoryList from "./InventoryList";
-import {apiEndpoint, updatePrice} from "../common";
+import {apiEndpoint} from "../common";
 import {getRequest, postRequest} from "../requestBuilder";
 import React, {useEffect, useState} from "react";
 import Loader from "../Loader";

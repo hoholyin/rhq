@@ -99,25 +99,6 @@
     font-size: 18px;
 }
 
-.radio-box {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-}
-
-.radio-button {
-    margin-right: 10px;
-}
-
-.radio-label {
-    font-family: Lato;
-    font-size: 15px;
-}
-
-.radio-row {
-    margin-bottom: 20px;
-}
-
 .form-button-inactive {
     background-color: #0A0A0A;
     border-radius: 5px;
