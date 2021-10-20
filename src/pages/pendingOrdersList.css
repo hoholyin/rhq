@@ -7,6 +7,22 @@
     }
 }
 
+.pending-orders-list-row-container {
+    display: flex;
+    flex-direction: row;
+    background-color: #282c34;
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 5px;
+    padding: 10px;
+    border-radius: 5px;
+    justify-content: space-between;
+    padding-bottom: 8px;
+    border-width: 2px;
+    border-style: solid;
+    border-color: #282c34;
+}
+
 .pending-orders-list {
     padding: 10px;
     border-radius: 5px;
@@ -15,34 +31,10 @@
 .pending-orders-list-row {
     display: flex;
     flex-direction: column;
-    margin-left: 10px;
-    margin-right: 10px;
-    margin-top: 5px;
-    padding: 10px;
-    border-radius: 5px;
-    justify-content: center;
-    padding-bottom: 8px;
-    background-color: #282c34;
-    border-width: 2px;
-    border-style: solid;
-    border-color: #282c34;
 }
 
-.pending-orders-list-row-selected {
-    display: flex;
-    flex-direction: column;
-    margin-left: 10px;
-    margin-right: 10px;
-    margin-top: 5px;
-    padding: 10px;
-    border-radius: 5px;
-    justify-content: center;
-    padding-bottom: 8px;
-    background-color: #282c34;
-    border-width: 2px;
-    border-style: solid;
-    border-color: #04AA6D;
-    font-family: Lato-Bold;
+.checkbox-container {
+    padding-left: 10px;
 }
 
 .pending-order-code {

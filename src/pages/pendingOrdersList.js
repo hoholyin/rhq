@@ -1,6 +1,7 @@
 import React from "react";
 import "./pendingOrdersList.css"
 
+
 const PendingOrdersList = (props) => {
     if (props.pendingOrdersList.length === 0) {
         return (
@@ -14,14 +15,19 @@ const PendingOrdersList = (props) => {
     return (
         <div className="pending-orders-list">
             {props.pendingOrdersList.map((e) => {
-                const row_class = e.selected ? "pending-orders-list-row-selected" : "pending-orders-list-row"
+                const id = "checkbox-" + e.row
                 return (
-                    <div className={row_class} onClick={() => props.elementOnClick(e)}>
-                        <div className="pending-order-code">
-                            {e.code}
+                    <div className="pending-orders-list-row-container">
+                        <div className="pending-order-list-row">
+                            <div className="pending-order-code">
+                                {e.code}
+                            </div>
+                            <div className="pending-order-name">
+                                {e.name}
+                            </div>
                         </div>
-                        <div className="pending-order-name">
-                            {e.name}
+                        <div className="checkbox-container" key={id} onClick={() => props.elementOnClick(e)}>
+                            <input type="checkbox" id={id} className="checkbox" />
                         </div>
                     </div>
                 )

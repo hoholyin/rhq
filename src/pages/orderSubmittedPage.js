@@ -6,14 +6,12 @@ import "./orderSubmittedPage.css";
 const OrderSubmittedPage = (props) => {
     return (
         <div className="App">
-            <div className="App-header">
-                <div onClick={() => props.navigate("")}>
-                    <img src={logo} className="submit-order-app-logo" alt="logo"/>
-                </div>
-                <span className="submitted-message">Submitted!</span>
-                <div onClick={() => props.navigate("")}>
-                    <div className="button">Back to Homepage</div>
-                </div>
+            <div onClick={() => props.navigate("")}>
+                <img src={logo} className="submit-order-app-logo" alt="logo"/>
+            </div>
+            <span className="submitted-message">Submitted!</span>
+            <div onClick={() => props.navigate("")}>
+                <div className="button">Back to Homepage</div>
             </div>
         </div>
     );
