@@ -13,6 +13,9 @@ const PendingOrdersPage = (props) => {
     const [ordersList, setOrdersList] = useState([]);
     const [bossName, setBossName] = useState("");
     const [submitting, setSubmitting] = useState(false)
+    const isMobile =
+        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+        || document.documentElement.clientWidth < 400;
 
     useEffect(() => {
         refreshOrders();
@@ -92,7 +95,7 @@ const PendingOrdersPage = (props) => {
             <div className="pending-orders-list-container">
                 {isLoading
                     ? <Loader />
-                    : <PendingOrdersList pendingOrdersList={ordersList} elementOnClick={addItemToSelection}/>}
+                    : <PendingOrdersList pendingOrdersList={ordersList} isMobile={isMobile} elementOnClick={addItemToSelection}/>}
             </div>
             <div className="boss-container">
                 <span className="form-label">Boss</span>

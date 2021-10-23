@@ -12,6 +12,7 @@ const PendingOrdersList = (props) => {
             </div>
         )
     }
+    const codeClassName = props.isMobile ? "pending-order-code-mobile" : "pending-order-code"
     return (
         <div className="pending-orders-list">
             {props.pendingOrdersList.map((e) => {
@@ -19,7 +20,7 @@ const PendingOrdersList = (props) => {
                 return (
                     <div className="pending-orders-list-row-container">
                         <div className="pending-order-list-row">
-                            <div className="pending-order-code">
+                            <div className={codeClassName}>
                                 {e.code}
                             </div>
                             <div className="pending-order-name">

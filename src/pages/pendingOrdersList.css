@@ -1,10 +1,19 @@
 @media (max-width: 500px) {
     .pending-order-code {
-        font-size: 5px;
     }
     .pending-order-name {
         font-size: 18px;
     }
+}
+
+.pending-order-code-mobile {
+    font-size: 15px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    padding-bottom: 5px;
+    color: #04AA6D;
+    text-align: start;
 }
 
 .pending-orders-list-row-container {
