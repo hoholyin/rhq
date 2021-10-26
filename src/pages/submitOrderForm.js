@@ -205,6 +205,7 @@ const SubmitOrderForm = (props) => {
                 tips: tips,
                 stamps: stamps,
                 remarks: remarks,
+                bossName: bossName.toUpperCase()
             }
             await postRequest(apiEndpoint + '/order', order)
             setSubmittingOrderCheckCorrect(1)

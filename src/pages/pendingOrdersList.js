@@ -24,7 +24,7 @@ const PendingOrdersList = (props) => {
                                 {e.code}
                             </div>
                             <div className="pending-order-name">
-                                {e.name}
+                                {e.name + " (" + e.boss + ")"}
                             </div>
                         </div>
                         <div className="checkbox-container" key={id} onClick={() => props.elementOnClick(e)}>
