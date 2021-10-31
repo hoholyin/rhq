@@ -37,6 +37,14 @@
     border-radius: 5px;
 }
 
+.pending-order-qty {
+    font-size: 15px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    padding-bottom: 5px;
+}
+
 .pending-orders-list-row {
     display: flex;
     flex-direction: column;

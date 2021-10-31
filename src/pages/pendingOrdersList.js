@@ -23,6 +23,9 @@ const PendingOrdersList = (props) => {
                             <div className={codeClassName}>
                                 {e.code}
                             </div>
+                            <div className="pending-order-qty">
+                                {"x" + e.qty}
+                            </div>
                             <div className="pending-order-name">
                                 {e.name + " (" + e.boss + ")"}
                             </div>
