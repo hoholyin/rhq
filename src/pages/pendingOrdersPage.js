@@ -9,10 +9,11 @@ import refresh from "../assets/refresh.png";
 import PendingOrdersList from "./pendingOrdersList";
 
 const PendingOrdersPage = (props) => {
-    const [isLoading, setIsLoading] = useState(false);
-    const [ordersList, setOrdersList] = useState([]);
-    const [bossName, setBossName] = useState("");
+    const [isLoading, setIsLoading] = useState(false)
+    const [ordersList, setOrdersList] = useState([])
+    const [bossName, setBossName] = useState("")
     const [submitting, setSubmitting] = useState(false)
+    const [cbList, setCbList] = useState([])
     const isMobile =
         /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
         || document.documentElement.clientWidth < 400;
@@ -33,14 +34,8 @@ const PendingOrdersPage = (props) => {
         setIsLoading(false)
     }
 
-    const addItemToSelection = (item) => {
-        const newOrdersList = ordersList.map((order) => {
-            if (order.row === item.row) {
-                order.selected = !order.selected
-            }
-            return order
-        })
-        setOrdersList(newOrdersList)
+    const addCbToSelection = (item) => {
+        setCbList([...cbList, item]);
     }
 
     const submitPendingOrders = async () => {
@@ -50,7 +45,7 @@ const PendingOrdersPage = (props) => {
             setSubmitting(false)
             return
         }
-        const selectedRows = getSelectedRows();
+        const selectedRows = getSelectedOrders().map((obj) => obj.row)
         const dataObject = {
             rows: selectedRows
         }
@@ -59,12 +54,12 @@ const PendingOrdersPage = (props) => {
         props.navigate("orderSubmitted")
     }
 
-    const getSelectedRows = () => {
-        return ordersList.filter((item) => item.selected).map((item) => item.row)
+    const getSelectedOrders = () => {
+        return cbList.filter((obj) => obj.cb.target.checked)
     }
 
     const canSubmit = () => {
-        return bossName !== "" && submitting === false && getSelectedRows().length !== 0;
+        return bossName !== "" && submitting === false && getSelectedOrders().length !== 0;
     }
 
     const inactiveButton = () => {
@@ -95,7 +90,7 @@ const PendingOrdersPage = (props) => {
             <div className="pending-orders-list-container">
                 {isLoading
                     ? <Loader />
-                    : <PendingOrdersList pendingOrdersList={ordersList} isMobile={isMobile} elementOnClick={addItemToSelection}/>}
+                    : <PendingOrdersList pendingOrdersList={ordersList} isMobile={isMobile} elementOnClick={addCbToSelection}/>}
             </div>
             <div className="boss-container">
                 <span className="form-label">Boss</span>

@@ -18,7 +18,7 @@ const PendingOrdersList = (props) => {
             {props.pendingOrdersList.map((e) => {
                 const id = "checkbox-" + e.row
                 return (
-                    <div className="pending-orders-list-row-container">
+                    <div className="pending-orders-list-row-container" key={e.row}>
                         <div className="pending-order-list-row">
                             <div className={codeClassName}>
                                 {e.code}
@@ -30,7 +30,7 @@ const PendingOrdersList = (props) => {
                                 {e.name + " (" + e.boss + ")"}
                             </div>
                         </div>
-                        <div className="checkbox-container" key={id} onClick={() => props.elementOnClick(e)}>
+                        <div className="checkbox-container" key={id} onClick={(cb) => props.elementOnClick({cb: cb, row: e.row})}>
                             <input type="checkbox" id={id} className="checkbox" />
                         </div>
                     </div>
