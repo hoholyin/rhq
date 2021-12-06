@@ -21,7 +21,7 @@ const SubmitOrderForm = (props) => {
     const [remarks, setRemarks] = useState("NA")
     const [tips, setTips] = useState("$0.00")
     const [bossName, setBossName] = useState("")
-    const [selectedCode, setSelectedCode] = useState("")
+    const [items, setItems] = useState([])
     const [searchQuery, setSearchQuery] = useState("")
     const [inventoryList, setInventoryList] = useState([]);
     const [allInventories, setAllInventories] = useState([]);
@@ -86,8 +86,8 @@ const SubmitOrderForm = (props) => {
         setIsLoading(false)
     }
 
-    const checkItemRow = async () => {
-        const itemRowResult = await postRequest(apiEndpoint + '/inventoryRow', {code: selectedCode})
+    const checkItemRow = async (code) => {
+        const itemRowResult = await postRequest(apiEndpoint + '/inventoryRow', {code: code})
         return itemRowResult.data.row
     }
 
@@ -154,92 +154,95 @@ const SubmitOrderForm = (props) => {
             }
             setBossCheckCorrect(1)
 
-            const itemRow = await checkItemRow();
-            if (!itemExists(itemRow)) {
-                setItemExistCheckCorrect(2)
-                setSubmitting(false)
-                return
+            const allRows = []
+            for (const item in items) {
+                const itemRow = await checkItemRow(item.code);
+                allRows.push(itemRow)
+                if (!itemExists(itemRow)) {
+                    setItemExistCheckCorrect(2)
+                    setSubmitting(false)
+                    return
+                }
             }
             setItemExistCheckCorrect(1)
 
-            const currLocationRes = await postRequest(apiEndpoint + '/inventoryGetLoc', {row: itemRow})
-            const currLocation = toLocObjectArray(currLocationRes.data.inventoryLoc)
-            let inStock = false
-            currLocation.forEach((e) => {
-                if (e.name.toUpperCase() === bossName.toUpperCase()) {
-                    inStock = e.qty >= qty
-                }
-            })
-            if (!inStock) {
-                setItemInStockCheckCorrect(2)
-                setSubmitting(false)
-                return
-            }
-            setItemInStockCheckCorrect(1)
-            let updatedCurrLocation = currLocation.map((e) => {
-                if (e.name.toUpperCase() === bossName.toUpperCase()) {
-                    return {
-                        name: e.name,
-                        qty: e.qty - qty
+            for (const itemRow in allRows) {
+                const currLocationRes = await postRequest(apiEndpoint + '/inventoryGetLoc', {row: itemRow})
+                const currLocation = toLocObjectArray(currLocationRes.data.inventoryLoc)
+                let inStock = false
+                currLocation.forEach((e) => {
+                    if (e.name.toUpperCase() === bossName.toUpperCase()) {
+                        inStock = e.qty >= qty
                     }
+                })
+                if (!inStock) {
+                    setItemInStockCheckCorrect(2)
+                    setSubmitting(false)
+                    return
                 }
-                return e
-            }).filter((e) => e.qty > 0)
-            const updatedCurrLocationString = toLocString(updatedCurrLocation)
-            await postRequest(apiEndpoint + '/inventoryUpdateLoc', {row: itemRow, location: updatedCurrLocationString})
+                setItemInStockCheckCorrect(1)
+                let updatedCurrLocation = currLocation.map((e) => {
+                    if (e.name.toUpperCase() === bossName.toUpperCase()) {
+                        return {
+                            name: e.name,
+                            qty: e.qty - qty
+                        }
+                    }
+                    return e
+                }).filter((e) => e.qty > 0)
+                const updatedCurrLocationString = toLocString(updatedCurrLocation)
+                await postRequest(apiEndpoint + '/inventoryUpdateLoc', {row: itemRow, location: updatedCurrLocationString})
+            }
             setUpdatingInventoryCheckCorrect(1)
 
-            const getOrdersInfo = await getRequest(apiEndpoint + "/orders")
-            const lastInvoiceNumber = getOrdersInfo.data.lastInvoiceNumber
-
-            const currInvoiceNumber = generateNextInvoiceNumber(lastInvoiceNumber)
             const today = generateTodayDate()
-
-            const order = {
-                code: selectedCode,
-                customer: customerName,
-                invoice_number: currInvoiceNumber,
-                invoice_date: today,
-                qty: qty,
-                amt: amount,
-                tips: tips,
-                stamps: stamps,
-                remarks: remarks,
-                bossName: bossName.toUpperCase()
-            }
-            await postRequest(apiEndpoint + '/order', order)
-            setSubmittingOrderCheckCorrect(1)
-
-            if (tips !== "$0.00") {
-                const tipsObject = {
+            for (const item in items) {
+                const getOrdersInfo = await getRequest(apiEndpoint + "/orders")
+                const lastInvoiceNumber = getOrdersInfo.data.lastInvoiceNumber
+                const currInvoiceNumber = generateNextInvoiceNumber(lastInvoiceNumber)
+                const order = {
+                    code: item.code,
                     customer: customerName,
                     invoice_number: currInvoiceNumber,
-                    tipAmount: tips
+                    invoice_date: today,
+                    qty: qty,
+                    amt: amount,
+                    tips: tips,
+                    stamps: stamps,
+                    remarks: remarks,
+                    bossName: bossName.toUpperCase()
                 }
-                await postRequest(apiEndpoint + '/addTips', tipsObject)
-            }
+                await postRequest(apiEndpoint + '/order', order)
+                if (tips !== "$0.00") {
+                    const tipsObject = {
+                        customer: customerName,
+                        invoice_number: currInvoiceNumber,
+                        tipAmount: tips
+                    }
+                    await postRequest(apiEndpoint + '/addTips', tipsObject)
+                }
+                const getLastCashIn = await getRequest(apiEndpoint + "/cce_in")
+                let lastCashInIndex = getLastCashIn.data.lastCashInIndex
+                if (!lastCashInIndex.startsWith("CI")) {
+                    lastCashInIndex = "CI000"
+                }
+                const lastCashInRow = getLastCashIn.data.row
 
-            const getLastCashIn = await getRequest(apiEndpoint + "/cce_in")
-            let lastCashInIndex = getLastCashIn.data.lastCashInIndex
-            if (!lastCashInIndex.startsWith("CI")) {
-                lastCashInIndex = "CI000"
-            }
-            const lastCashInRow = getLastCashIn.data.row
+                const currCashInIndex = generateNextCashInOutIndexNumber(lastCashInIndex)
+                const cashInDescription = "Sales - " + currInvoiceNumber
+                const currCashInRow = parseInt(lastCashInRow) + 1
 
-            const currCashInIndex = generateNextCashInOutIndexNumber(lastCashInIndex)
-            const cashInDescription = "Sales - " + currInvoiceNumber
-            const currCashInRow = parseInt(lastCashInRow) + 1
-
-            const createLastCashInObject = {
-                indexNumber: currCashInIndex,
-                date: today,
-                description: cashInDescription,
-                amount: addPrice(amount, tips),
-                row: currCashInRow
+                const createLastCashInObject = {
+                    indexNumber: currCashInIndex,
+                    date: today,
+                    description: cashInDescription,
+                    amount: addPrice(amount, tips),
+                    row: currCashInRow
+                }
+                await postRequest(apiEndpoint + '/cce_in', createLastCashInObject)
             }
-            await postRequest(apiEndpoint + '/cce_in', createLastCashInObject)
+            setSubmittingOrderCheckCorrect(1)
             setUpdatingAccountsCheckCorrect(1)
-
             setSubmitting(false)
             props.navigate("orderSubmitted")
         } catch (err) {
@@ -324,44 +327,63 @@ const SubmitOrderForm = (props) => {
                     return false
                 }
             }
+            if (items.filter((item) => item.code === e.code).length > 0) {
+                return false
+            }
             return true
         })
         setInventoryList(filteredItems)
     }
 
     const selectedCodeModal = () => {
-        let processedWord = "";
-        for (let i = 0; i < selectedCode.length; i++) {
-            if (processedWord.length === 0 || selectedCode.length === i + 1) {
-                processedWord += selectedCode[i]
-                continue;
+        const allProcessedWords = items.map((item) => {
+            const code = item.code
+            let processedWord = "";
+            for (let i = 0; i < code.length; i++) {
+                if (processedWord.length === 0 || code.length === i + 1) {
+                    processedWord += code[i]
+                    continue;
+                }
+                const lastChar = processedWord.slice(-1);
+                const nextChar = code[i];
+                if (lastChar.match(/[0-9|a-z]/) && nextChar.match(/[A-Z]/)) {
+                    processedWord += "\n"
+                }
+                processedWord += code[i]
             }
-            const lastChar = processedWord.slice(-1);
-            const nextChar = selectedCode[i];
-            if (lastChar.match(/[0-9|a-z]/) && nextChar.match(/[A-Z]/)) {
-                processedWord += "\n"
-            }
-            processedWord += selectedCode[i]
-        }
+            return { processedWord: processedWord, code: code }
+        })
         return (
-            <div className="selected-code-modal">
-                <div className="modal-padding"></div>
-                <span className="selected-item-name">{processedWord}</span>
-                <div className="remove-selection" onClick={() => unselectItem()}>
-                    <img src={cross} className="remove-selection-icon" alt="logo"/>
-                </div>
+            <div className="selected-code-list">
+                {allProcessedWords.map((processedWordObj) => {
+                    return (
+                        <div className="selected-code-modal">
+                            <div className="modal-padding"></div>
+                            <span className="selected-item-name">{processedWordObj.processedWord}</span>
+                            <div className="remove-selection" onClick={() => unselectItem(processedWordObj.code)}>
+                                <img src={cross} className="remove-selection-icon" alt="logo"/>
+                            </div>
+                        </div>
+                    )
+                })}
             </div>
         )
     }
 
-    const unselectItem = () => {
-        setSelectedCode("")
-        updatePrice("$0.00", setAmount)
+    const unselectItem = (code) => {
+        const removed = items.filter((item) => item.code !== code)
+        setItems(removed)
+        let totalPrice = "$0.00"
+        removed.forEach((item) => {
+            totalPrice = addPrice(totalPrice, item.price)
+        })
+        updatePrice(totalPrice, setAmount)
     }
 
     const selectItem = (item) => {
-        setSelectedCode(item.code)
-        updatePrice(item.price, setAmount)
+        const added = [...items, item]
+        setItems(added)
+        updatePrice(addPrice(amount, item.price), setAmount)
         setSearchQuery("")
     }
 
@@ -371,8 +393,7 @@ const SubmitOrderForm = (props) => {
             <span className="form-label">Customer's name</span>
             <input className="input-box" type="text" onChange={e => setCustomerName(e.target.value)}/>
             <span className="form-label">Item</span>
-            {selectedCode === "" && <input className="input-box" placeholder="Start typing to search..." type="text" onChange={e => search(e.target.value)}/>}
-            {selectedCode !== "" && selectedCodeModal()}
+            <input className="input-box" placeholder="Start typing to search..." type="text" value={searchQuery} onChange={e => search(e.target.value)}/>
             {searchQuery !== "" && inventoryList.map((e) => {
                 return (
                     <div className="search-item-row" onClick={() => selectItem(e)}>
@@ -380,6 +401,7 @@ const SubmitOrderForm = (props) => {
                     </div>
                 )
             })}
+            {items.length > 0 && selectedCodeModal()}
             <span className="form-label">Quantity</span>
             <input className="input-box" type="number" value={qty} onChange={e => setQty(e.target.value)}/>
             <span className="form-label">Net Amount (After discount)</span>
