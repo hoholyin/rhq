@@ -65,6 +65,9 @@ export const addPrice = (p1, p2) => {
     if (!totalFloat.includes(".")) {
         totalFloat += ".00"
     }
+    while (totalFloat.split(".")[1].length > 2) {
+        totalFloat = totalFloat.slice(0, -1)
+    }
     while (totalFloat.split(".")[1].length < 2) {
         totalFloat += "0"
     }
@@ -85,6 +88,10 @@ export const toLocObjectArray = (locString) => {
                 qty: parseInt(qty)
             }
         })
+}
+
+export const isInteger = (num) => {
+    return !isNaN(parseInt(num))
 }
 
 export const toLocString = (locObjectArray) => {

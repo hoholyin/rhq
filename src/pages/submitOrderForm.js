@@ -3,7 +3,7 @@ import {
     apiEndpoint,
     generateNextCashInOutIndexNumber,
     generateNextInvoiceNumber,
-    generateTodayDate, isBossCorrect, isPrice, itemExists,
+    generateTodayDate, isBossCorrect, isInteger, isPrice, itemExists,
     toLocObjectArray, toLocString, updatePrice
 } from "../common";
 import tick from "../assets/tick.png";
@@ -15,10 +15,9 @@ import {getRequest, postRequest} from "../requestBuilder";
 
 const SubmitOrderForm = (props) => {
     const [customerName, setCustomerName] = useState("");
-    const [qty, setQty] = useState("1")
     const [amount, setAmount] = useState("$0.00")
     const [stamps, setStamps] = useState("$0.00")
-    const [remarks, setRemarks] = useState("NA")
+    const [remarks, setRemarks] = useState("Pending")
     const [tips, setTips] = useState("$0.00")
     const [bossName, setBossName] = useState("")
     const [items, setItems] = useState([])
@@ -29,7 +28,6 @@ const SubmitOrderForm = (props) => {
 
     const [isStatusMessagesVisible, setStatusMessagesVisible] = useState(false)
     const [bossCheckCorrect, setBossCheckCorrect] = useState(0)
-    const [itemExistCheckCorrect, setItemExistCheckCorrect] = useState(0)
     const [itemInStockCheckCorrect, setItemInStockCheckCorrect] = useState(0)
     const [updatingInventoryCheckCorrect, setUpdatingInventoryCheckCorrect] = useState(0)
     const [submittingOrderCheckCorrect, setSubmittingOrderCheckCorrect] = useState(0)
@@ -39,10 +37,6 @@ const SubmitOrderForm = (props) => {
         {
             indicator: bossCheckCorrect,
             setter: setBossCheckCorrect
-        },
-        {
-            indicator: itemExistCheckCorrect,
-            setter: setItemExistCheckCorrect
         },
         {
             indicator: itemInStockCheckCorrect,
@@ -91,6 +85,28 @@ const SubmitOrderForm = (props) => {
         return itemRowResult.data.row
     }
 
+    const setQty = (code, qty) => {
+        if (!isInteger(qty) || parseInt(qty) < 0) {
+            qty = 0
+        }
+        const oldItems = [...items]
+        oldItems.map((item) => {
+            if (item.obj.code === code) {
+                item.qty = qty
+            }
+            return item
+        })
+        setItems(oldItems)
+        let newPrice = "$0.00"
+        console.log(oldItems)
+        oldItems.forEach((item) => {
+            for (let i = 0; i < item.qty; i++) {
+                newPrice = addPrice(newPrice, item.obj.price)
+            }
+        })
+        updatePrice(newPrice, setAmount)
+    }
+
     const setWarning = (warningMessage) => {
         setWarningMessage(warningMessage)
         setWarningMessageVisible(true)
@@ -104,7 +120,6 @@ const SubmitOrderForm = (props) => {
     const resetStatusMessages = () => {
         setStatusMessagesVisible(false)
         setBossCheckCorrect(0)
-        setItemExistCheckCorrect(0)
         setItemInStockCheckCorrect(0)
         setUpdatingInventoryCheckCorrect(0)
         setSubmittingOrderCheckCorrect(0)
@@ -116,10 +131,13 @@ const SubmitOrderForm = (props) => {
             setStatusMessagesVisible(false)
             setSubmitting(true)
             resetWarningMessages()
-            if (!/^[1-9]\d*$/.test(qty)) {
-                setWarning("Invalid quantity!")
-                setSubmitting(false)
-                return
+            for (let i = 0; i < items.length; i++) {
+                const item = items[i]
+                if (!/^[1-9]\d*$/.test(item.qty)) {
+                    setWarning("Invalid quantity!")
+                    setSubmitting(false)
+                    return
+                }
             }
 
             setAmount(amount === "$" ? "$0.00" : amount)
@@ -154,28 +172,22 @@ const SubmitOrderForm = (props) => {
             }
             setBossCheckCorrect(1)
 
-            const allRows = []
-            for (const item in items) {
-                const itemRow = await checkItemRow(item.code);
-                allRows.push(itemRow)
-                if (!itemExists(itemRow)) {
-                    setItemExistCheckCorrect(2)
-                    setSubmitting(false)
-                    return
-                }
-            }
-            setItemExistCheckCorrect(1)
-
-            for (const itemRow in allRows) {
+            for (let i = 0; i < items.length; i++) {
+                const item = items[i]
+                const itemRow = await checkItemRow(item.obj.code);
                 const currLocationRes = await postRequest(apiEndpoint + '/inventoryGetLoc', {row: itemRow})
                 const currLocation = toLocObjectArray(currLocationRes.data.inventoryLoc)
                 let inStock = false
+                let noStock = false
                 currLocation.forEach((e) => {
                     if (e.name.toUpperCase() === bossName.toUpperCase()) {
-                        inStock = e.qty >= qty
+                        inStock = e.qty >= item.qty
+                        if (!inStock) {
+                            noStock = true
+                        }
                     }
                 })
-                if (!inStock) {
+                if (noStock) {
                     setItemInStockCheckCorrect(2)
                     setSubmitting(false)
                     return
@@ -185,7 +197,7 @@ const SubmitOrderForm = (props) => {
                     if (e.name.toUpperCase() === bossName.toUpperCase()) {
                         return {
                             name: e.name,
-                            qty: e.qty - qty
+                            qty: e.qty - item.qty
                         }
                     }
                     return e
@@ -196,17 +208,18 @@ const SubmitOrderForm = (props) => {
             setUpdatingInventoryCheckCorrect(1)
 
             const today = generateTodayDate()
-            for (const item in items) {
+            for (let i = 0; i < items.length; i++) {
+                const item = items[i]
                 const getOrdersInfo = await getRequest(apiEndpoint + "/orders")
                 const lastInvoiceNumber = getOrdersInfo.data.lastInvoiceNumber
                 const currInvoiceNumber = generateNextInvoiceNumber(lastInvoiceNumber)
                 const order = {
-                    code: item.code,
+                    code: item.obj.code,
                     customer: customerName,
                     invoice_number: currInvoiceNumber,
                     invoice_date: today,
-                    qty: qty,
-                    amt: amount,
+                    qty: item.qty,
+                    amt: i === 0 ? amount : "$0.00",
                     tips: tips,
                     stamps: stamps,
                     remarks: remarks,
@@ -236,7 +249,7 @@ const SubmitOrderForm = (props) => {
                     indexNumber: currCashInIndex,
                     date: today,
                     description: cashInDescription,
-                    amount: addPrice(amount, tips),
+                    amount: i === 0 ? addPrice(amount, tips) : "$0.00",
                     row: currCashInRow
                 }
                 await postRequest(apiEndpoint + '/cce_in', createLastCashInObject)
@@ -270,11 +283,6 @@ const SubmitOrderForm = (props) => {
                     <span className="status-message">Boss correct</span>
                     {bossCheckCorrect === 1 && <img src={tick} className="status-icon" alt="logo"/>}
                     {bossCheckCorrect === 2 && <img src={cross} className="status-icon" alt="logo"/>}
-                </div>
-                <div className="status-message-row">
-                    <span className="status-message">Item exists</span>
-                    {itemExistCheckCorrect === 1 && <img src={tick} className="status-icon" alt="logo"/>}
-                    {itemExistCheckCorrect === 2 && <img src={cross} className="status-icon" alt="logo"/>}
                 </div>
                 <div className="status-message-row">
                     <span className="status-message">In stock</span>
@@ -327,17 +335,14 @@ const SubmitOrderForm = (props) => {
                     return false
                 }
             }
-            if (items.filter((item) => item.code === e.code).length > 0) {
-                return false
-            }
-            return true
+            return items.filter((item) => item.code === e.code).length <= 0;
         })
         setInventoryList(filteredItems)
     }
 
     const selectedCodeModal = () => {
         const allProcessedWords = items.map((item) => {
-            const code = item.code
+            const code = item.obj.code
             let processedWord = "";
             for (let i = 0; i < code.length; i++) {
                 if (processedWord.length === 0 || code.length === i + 1) {
@@ -351,6 +356,7 @@ const SubmitOrderForm = (props) => {
                 }
                 processedWord += code[i]
             }
+            processedWord = processedWord.replaceAll("NA", "")
             return { processedWord: processedWord, code: code }
         })
         return (
@@ -358,8 +364,14 @@ const SubmitOrderForm = (props) => {
                 {allProcessedWords.map((processedWordObj) => {
                     return (
                         <div className="selected-code-modal">
-                            <div className="modal-padding"></div>
-                            <span className="selected-item-name">{processedWordObj.processedWord}</span>
+                            <div className="qty-container">
+                                <span className="form-label">Name</span>
+                                <span className="selected-item-name">{processedWordObj.processedWord}</span>
+                            </div>
+                            <div className="qty-container">
+                                <span className="form-label">Qty</span>
+                                <input className="qty-input" type="number" defaultValue={1} onChange={e => setQty(processedWordObj.code, e.target.value)}/>
+                            </div>
                             <div className="remove-selection" onClick={() => unselectItem(processedWordObj.code)}>
                                 <img src={cross} className="remove-selection-icon" alt="logo"/>
                             </div>
@@ -370,18 +382,27 @@ const SubmitOrderForm = (props) => {
         )
     }
 
+    const noItemsModal = () => {
+        return (
+            <div className="selected-code-modal">
+                <span className="form-label">No Items Selected!</span>
+            </div>
+        )
+    }
+
     const unselectItem = (code) => {
-        const removed = items.filter((item) => item.code !== code)
+        const removed = items.filter((item) => item.obj.code !== code)
         setItems(removed)
         let totalPrice = "$0.00"
         removed.forEach((item) => {
-            totalPrice = addPrice(totalPrice, item.price)
+            totalPrice = addPrice(totalPrice, item.obj.price)
         })
         updatePrice(totalPrice, setAmount)
     }
 
     const selectItem = (item) => {
-        const added = [...items, item]
+        const itemObj = { obj: item, qty: 1}
+        const added = [...items, itemObj]
         setItems(added)
         updatePrice(addPrice(amount, item.price), setAmount)
         setSearchQuery("")
@@ -392,8 +413,9 @@ const SubmitOrderForm = (props) => {
             <span className="form-header">Order Form</span>
             <span className="form-label">Customer's name</span>
             <input className="input-box" type="text" onChange={e => setCustomerName(e.target.value)}/>
-            <span className="form-label">Item</span>
+            <span className="form-label">Search Item</span>
             <input className="input-box" placeholder="Start typing to search..." type="text" value={searchQuery} onChange={e => search(e.target.value)}/>
+            <span className="form-label">Selected Items</span>
             {searchQuery !== "" && inventoryList.map((e) => {
                 return (
                     <div className="search-item-row" onClick={() => selectItem(e)}>
@@ -402,8 +424,7 @@ const SubmitOrderForm = (props) => {
                 )
             })}
             {items.length > 0 && selectedCodeModal()}
-            <span className="form-label">Quantity</span>
-            <input className="input-box" type="number" value={qty} onChange={e => setQty(e.target.value)}/>
+            {items.length === 0 && noItemsModal()}
             <span className="form-label">Net Amount (After discount)</span>
             <input className="input-box" type="text" value={amount} onChange={e => updatePrice(e.target.value, setAmount)}/>
             <span className="form-label">Stamp value</span>

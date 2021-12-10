@@ -66,16 +66,25 @@
     font-size: 2vh;
     color: #05c37b;
     font-family: Lato-Bold;
+    display: flex;
+    flex-direction: row;
+    justify-items: flex-start;
 }
 
-.modal-padding {
-    width: 20px;
+.qty-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.qty-input {
+    width: 30px;
 }
 
 .selected-code-modal {
     background-color: #16181c;
     margin-bottom: 5px;
-    padding: 5px;
+    padding: 10px;
     border-radius: 5px;
     display: flex;
     flex-direction: row;
