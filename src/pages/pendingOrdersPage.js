@@ -13,7 +13,6 @@ const PendingOrdersPage = (props) => {
     const [ordersList, setOrdersList] = useState([])
     const [bossName, setBossName] = useState("")
     const [submitting, setSubmitting] = useState(false)
-    const [cbList, setCbList] = useState([])
     const isMobile =
         /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
         || document.documentElement.clientWidth < 400;
@@ -34,8 +33,19 @@ const PendingOrdersPage = (props) => {
         setIsLoading(false)
     }
 
-    const addCbToSelection = (item) => {
-        setCbList([...cbList, item]);
+    const selectItem = (obj) => {
+        const row = obj.row
+        const selected = obj.val
+        const updatedOrders = ordersList.map((o) => {
+            if (o.row === row) {
+                return {
+                    ...o,
+                    selected: selected
+                }
+            }
+            return o
+        })
+        setOrdersList(updatedOrders)
     }
 
     const submitPendingOrders = async () => {
@@ -55,7 +65,17 @@ const PendingOrdersPage = (props) => {
     }
 
     const getSelectedOrders = () => {
-        return cbList.filter((obj) => obj.cb.target.checked)
+        return ordersList.filter((obj) => obj.selected)
+    }
+
+    const selectAllCheckbox = () => {
+        const updatedOrders = [...ordersList]
+        setOrdersList(updatedOrders.map((o) => {
+            return {
+                ...o,
+                selected: true
+            }
+        }))
     }
 
     const canSubmit = () => {
@@ -87,10 +107,11 @@ const PendingOrdersPage = (props) => {
             <div className="logo-container interactive" onClick={() => props.navigate("")}>
                 <img src={logo} className="submit-order-app-logo" alt="logo"/>
             </div>
+            <div className="form-button" onClick={selectAllCheckbox}>Select All Orders</div>
             <div className="pending-orders-list-container">
                 {isLoading
                     ? <Loader />
-                    : <PendingOrdersList pendingOrdersList={ordersList} isMobile={isMobile} elementOnClick={addCbToSelection}/>}
+                    : <PendingOrdersList pendingOrdersList={ordersList} isMobile={isMobile} elementOnClick={selectItem}/>}
             </div>
             <div className="boss-container">
                 <span className="form-label">Boss</span>

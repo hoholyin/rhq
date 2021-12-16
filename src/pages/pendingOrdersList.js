@@ -30,8 +30,8 @@ const PendingOrdersList = (props) => {
                                 {e.name + " (" + e.boss + ")"}
                             </div>
                         </div>
-                        <div className="checkbox-container" key={id} onClick={(cb) => props.elementOnClick({cb: cb, row: e.row})}>
-                            <input type="checkbox" id={id} className="checkbox" />
+                        <div className="checkbox-container" key={id} onClick={(cb) => props.elementOnClick({row: e.row, val: cb.target.checked})}>
+                            <input type="checkbox" id={id} checked={e.selected}  className="checkbox"/>
                         </div>
                     </div>
                 )
