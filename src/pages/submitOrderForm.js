@@ -98,7 +98,6 @@ const SubmitOrderForm = (props) => {
         })
         setItems(oldItems)
         let newPrice = "$0.00"
-        console.log(oldItems)
         oldItems.forEach((item) => {
             for (let i = 0; i < item.qty; i++) {
                 newPrice = addPrice(newPrice, item.obj.price)
@@ -178,12 +177,12 @@ const SubmitOrderForm = (props) => {
                 const currLocationRes = await postRequest(apiEndpoint + '/inventoryGetLoc', {row: itemRow})
                 const currLocation = toLocObjectArray(currLocationRes.data.inventoryLoc)
                 let inStock = false
-                let noStock = false
+                let noStock = true
                 currLocation.forEach((e) => {
                     if (e.name.toUpperCase() === bossName.toUpperCase()) {
                         inStock = e.qty >= item.qty
-                        if (!inStock) {
-                            noStock = true
+                        if (inStock) {
+                            noStock = false
                         }
                     }
                 })
@@ -223,7 +222,8 @@ const SubmitOrderForm = (props) => {
                     tips: tips,
                     stamps: stamps,
                     remarks: remarks,
-                    bossName: bossName.toUpperCase()
+                    bossName: bossName.toUpperCase(),
+                    cog: item.obj.cost
                 }
                 await postRequest(apiEndpoint + '/order', order)
                 if (tips !== "$0.00") {
