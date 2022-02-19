@@ -16,7 +16,7 @@ import {getRequest, postRequest} from "../requestBuilder";
 const SubmitOrderForm = (props) => {
     const [customerName, setCustomerName] = useState("");
     const [amount, setAmount] = useState("$0.00")
-    const [stamps, setStamps] = useState("$0.00")
+    const [stamps, setStamps] = useState("$0.60")
     const [remarks, setRemarks] = useState("Pending")
     const [tips, setTips] = useState("$0.00")
     const [bossName, setBossName] = useState("")
