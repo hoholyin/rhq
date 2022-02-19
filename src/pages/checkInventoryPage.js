@@ -24,7 +24,7 @@ const CheckInventoryPage = (props) => {
 
     const search = (searchQuery) => {
         setQuery(searchQuery)
-        if (searchQuery == "") {
+        if (searchQuery === "") {
             return
         }
         const allWords = searchQuery.split(" ")
@@ -51,10 +51,10 @@ const CheckInventoryPage = (props) => {
             e.name = e.name.replaceAll("Phone case", "")
             return e
         })
+        console.log(allInventories)
         setAllInventories(allInventories)
         setInventoryList(allInventories)
         setIsLoading(false)
-        search(query)
     }
 
     const selectCode = async (code) => {
@@ -134,7 +134,7 @@ const CheckInventoryPage = (props) => {
             <div className="logo-container interactive" onClick={() => props.navigate("")}>
                 <img src={logo} className="submit-order-app-logo" alt="logo"/>
             </div>
-            <input className="input-box" type="text" onChange={e => search(e.target.value)}/>
+            {!isLoading && <input className="input-box" type="text" onChange={e => search(e.target.value)}/>}
             {selectedCode !== ""
                 ? isLoadingSelection ? <Loader /> : selectedCodeModal()
                 : null }
