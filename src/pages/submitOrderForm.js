@@ -23,8 +23,10 @@ const SubmitOrderForm = (props) => {
     const [items, setItems] = useState([])
     const [searchQuery, setSearchQuery] = useState("")
     const [inventoryList, setInventoryList] = useState([]);
+    const [blacklist, setBlacklist] = useState([]);
     const [allInventories, setAllInventories] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
+    const [isInBlacklist, setIsInBlacklist] = useState(false);
 
     const [isStatusMessagesVisible, setStatusMessagesVisible] = useState(false)
     const [bossCheckCorrect, setBossCheckCorrect] = useState(0)
@@ -62,10 +64,10 @@ const SubmitOrderForm = (props) => {
     const [warningMessage, setWarningMessage] = useState("")
 
     useEffect(() => {
-        refreshInventory()
+        setUpOrderForm()
     }, [])
 
-    const refreshInventory = async () => {
+    const setUpOrderForm = async () => {
         setIsLoading(true)
         const inventoryListObject = await getRequest(apiEndpoint + '/inventory')
         const allInventories = inventoryListObject.data.allInventories
@@ -77,7 +79,14 @@ const SubmitOrderForm = (props) => {
         })
         setAllInventories(allInventories)
         setInventoryList(allInventories)
+        const allNames = await getBlacklist()
+        setBlacklist(allNames)
         setIsLoading(false)
+    }
+
+    const getBlacklist = async () => {
+        const blacklistObject = await getRequest(apiEndpoint + '/blacklist')
+        return blacklistObject.data.allNames
     }
 
     const checkItemRow = async (code) => {
@@ -123,6 +132,16 @@ const SubmitOrderForm = (props) => {
         setUpdatingInventoryCheckCorrect(0)
         setSubmittingOrderCheckCorrect(0)
         setUpdatingAccountsCheckCorrect(0)
+    }
+
+    const verifyAndSetCustomerName = (name) => {
+        if (blacklist.includes(name)) {
+            // Is in blacklist
+            setIsInBlacklist(true)
+        } else {
+            setIsInBlacklist(false)
+        }
+        setCustomerName(name)
     }
 
     const submitOrder = async () => {
@@ -412,7 +431,8 @@ const SubmitOrderForm = (props) => {
         <div className="form">
             <span className="form-header">Order Form</span>
             <span className="form-label">Customer's name</span>
-            <input className="input-box" type="text" onChange={e => setCustomerName(e.target.value)}/>
+            <input className="input-box" type="text" onChange={e => verifyAndSetCustomerName(e.target.value)}/>
+            {isInBlacklist && <span className="warning-message">Customer in blacklist!</span>}
             <span className="form-label">Search Item</span>
             <input className="input-box" placeholder="Start typing to search..." type="text" value={searchQuery} onChange={e => search(e.target.value)}/>
             <span className="form-label">Selected Items</span>
