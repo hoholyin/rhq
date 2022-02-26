@@ -263,13 +263,13 @@ const SubmitOrderForm = (props) => {
             }
             const lastCashInRow = getLastCashIn.data.row
             const currCashInIndex = generateNextCashInOutIndexNumber(lastCashInIndex)
-            const cashInDescription = "Sales - " + currInvoiceNumber
+            const cashInDescription = "Sales - " + firstInvoiceNumber
             const currCashInRow = parseInt(lastCashInRow) + 1
             const createLastCashInObject = {
                 indexNumber: currCashInIndex,
                 date: today,
                 description: cashInDescription,
-                amount: i === 0 ? addPrice(amount, tips) : "$0.00",
+                amount: addPrice(amount, tips),
                 row: currCashInRow
             }
             await postRequest(apiEndpoint + '/cce_in', createLastCashInObject)
