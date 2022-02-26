@@ -226,11 +226,13 @@ const SubmitOrderForm = (props) => {
             setUpdatingInventoryCheckCorrect(1)
 
             const today = generateTodayDate()
+            let firstInvoiceNumber;
             for (let i = 0; i < items.length; i++) {
                 const item = items[i]
                 const getOrdersInfo = await getRequest(apiEndpoint + "/orders")
                 const lastInvoiceNumber = getOrdersInfo.data.lastInvoiceNumber
                 const currInvoiceNumber = generateNextInvoiceNumber(lastInvoiceNumber)
+                firstInvoiceNumber = !firstInvoiceNumber ? currInvoiceNumber : firstInvoiceNumber
                 const order = {
                     code: item.obj.code,
                     customer: customerName,
@@ -245,34 +247,32 @@ const SubmitOrderForm = (props) => {
                     cog: item.obj.cost
                 }
                 await postRequest(apiEndpoint + '/order', order)
-                if (tips !== "$0.00") {
-                    const tipsObject = {
-                        customer: customerName,
-                        invoice_number: currInvoiceNumber,
-                        tipAmount: tips
-                    }
-                    await postRequest(apiEndpoint + '/addTips', tipsObject)
-                }
-                const getLastCashIn = await getRequest(apiEndpoint + "/cce_in")
-                let lastCashInIndex = getLastCashIn.data.lastCashInIndex
-                if (!lastCashInIndex.startsWith("CI")) {
-                    lastCashInIndex = "CI000"
-                }
-                const lastCashInRow = getLastCashIn.data.row
-
-                const currCashInIndex = generateNextCashInOutIndexNumber(lastCashInIndex)
-                const cashInDescription = "Sales - " + currInvoiceNumber
-                const currCashInRow = parseInt(lastCashInRow) + 1
-
-                const createLastCashInObject = {
-                    indexNumber: currCashInIndex,
-                    date: today,
-                    description: cashInDescription,
-                    amount: i === 0 ? addPrice(amount, tips) : "$0.00",
-                    row: currCashInRow
-                }
-                await postRequest(apiEndpoint + '/cce_in', createLastCashInObject)
             }
+            if (tips !== "$0.00") {
+                const tipsObject = {
+                    customer: customerName,
+                    invoice_number: firstInvoiceNumber,
+                    tipAmount: tips
+                }
+                await postRequest(apiEndpoint + '/addTips', tipsObject)
+            }
+            const getLastCashIn = await getRequest(apiEndpoint + "/cce_in")
+            let lastCashInIndex = getLastCashIn.data.lastCashInIndex
+            if (!lastCashInIndex.startsWith("CI")) {
+                lastCashInIndex = "CI000"
+            }
+            const lastCashInRow = getLastCashIn.data.row
+            const currCashInIndex = generateNextCashInOutIndexNumber(lastCashInIndex)
+            const cashInDescription = "Sales - " + currInvoiceNumber
+            const currCashInRow = parseInt(lastCashInRow) + 1
+            const createLastCashInObject = {
+                indexNumber: currCashInIndex,
+                date: today,
+                description: cashInDescription,
+                amount: i === 0 ? addPrice(amount, tips) : "$0.00",
+                row: currCashInRow
+            }
+            await postRequest(apiEndpoint + '/cce_in', createLastCashInObject)
             setSubmittingOrderCheckCorrect(1)
             setUpdatingAccountsCheckCorrect(1)
             setSubmitting(false)
