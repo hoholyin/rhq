@@ -3,11 +3,11 @@ import InventoryList from "./InventoryList";
 import {apiEndpoint} from "../common";
 import {getRequest, postRequest} from "../requestBuilder";
 import React, {useEffect, useState} from "react";
-import Loader from "../Loader";
 import "./checkInventoryPage.css"
 import back from "../assets/back.png";
 import refresh from "../assets/refresh.png";
 import cross from "../assets/cross.png";
+import RHQLoader from "../RHQLoader";
 
 const CheckInventoryPage = (props) => {
     const [inventoryList, setInventoryList] = useState([]);
@@ -136,11 +136,11 @@ const CheckInventoryPage = (props) => {
             </div>
             {!isLoading && <input className="input-box" type="text" onChange={e => search(e.target.value)}/>}
             {selectedCode !== ""
-                ? isLoadingSelection ? <Loader /> : selectedCodeModal()
+                ? isLoadingSelection ? <RHQLoader message={"Can wait abit anot..."}/> : selectedCodeModal()
                 : null }
             <div className="inventory-list-container">
                 {isLoading
-                    ? <Loader />
+                    ? <RHQLoader message={"Getting inventory list..."}/>
                     :<InventoryList inventoryList={inventoryList} elementOnClick={selectCode}/>}
             </div>
         </div>

@@ -2,7 +2,7 @@ import logo from "../assets/logo_transparent.png";
 import {apiEndpoint, isBossCorrect} from "../common";
 import {getRequest, postRequest} from "../requestBuilder";
 import React, {useEffect, useState} from "react";
-import Loader from "../Loader";
+import RHQLoader from "../RHQLoader";
 import "./pendingOrdersPage.css"
 import back from "../assets/back.png";
 import refresh from "../assets/refresh.png";
@@ -107,21 +107,25 @@ const PendingOrdersPage = (props) => {
             <div className="logo-container interactive" onClick={() => props.navigate("")}>
                 <img src={logo} className="submit-order-app-logo" alt="logo"/>
             </div>
-            <div className="form-button" onClick={selectAllCheckbox}>Select All Orders</div>
-            <div className="pending-orders-list-container">
-                {isLoading
-                    ? <Loader />
-                    : <PendingOrdersList pendingOrdersList={ordersList} isMobile={isMobile} elementOnClick={selectItem}/>}
-            </div>
-            <div className="boss-container">
-                <span className="form-label">Boss</span>
-                <input className="input-box" type="text" onChange={e => setBossName(e.target.value)}/>
-            </div>
-            {canSubmit()
-                ? activeButton()
-                : submitting
-                    ? <Loader />
-                    : inactiveButton()}
+            {isLoading
+                ? <RHQLoader message={"Fetching pending orders..."}/>
+                : <div className="App">
+                    <div className="form-button" onClick={selectAllCheckbox}>Select All Orders</div>
+                    <div className="pending-orders-list-container">
+                        <PendingOrdersList pendingOrdersList={ordersList} isMobile={isMobile}
+                                           elementOnClick={selectItem}/>
+                    </div>
+                    <div className="boss-container">
+                        <span className="form-label">Boss</span>
+                        <input className="input-box" type="text" onChange={e => setBossName(e.target.value)}/>
+                    </div>
+                    {canSubmit()
+                        ? activeButton()
+                        : submitting
+                            ? <RHQLoader message={"Submitting form..."}/>
+                            : inactiveButton()}
+                    </div>
+            }
         </div>
     )
 }

@@ -8,7 +8,7 @@ import {
 import {getRequest, postRequest} from "../requestBuilder";
 import tick from "../assets/tick.png";
 import cross from "../assets/cross.png";
-import Loader from "../Loader";
+import RHQLoader from "../RHQLoader";
 import "./addExpensesForm.css"
 
 const AddExpensesForm = (props) => {
@@ -207,7 +207,7 @@ const AddExpensesForm = (props) => {
             {canSubmit()
                 ? activeButton()
                 : submitting
-                    ? <Loader />
+                    ? <RHQLoader message={"Fetching expenses form..."} />
                     : inactiveButton()}
         </div>
     )

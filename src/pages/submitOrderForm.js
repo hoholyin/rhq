@@ -10,8 +10,8 @@ import tick from "../assets/tick.png";
 import cross from "../assets/cross.png";
 import React, {useEffect, useState} from "react";
 import "./submitOrderForm.css";
-import Loader from "../Loader";
 import {getRequest, postRequest} from "../requestBuilder";
+import RHQLoader from "../RHQLoader";
 
 const SubmitOrderForm = (props) => {
     const [customerName, setCustomerName] = useState("");
@@ -427,7 +427,7 @@ const SubmitOrderForm = (props) => {
         setSearchQuery("")
     }
 
-    return ( isLoading ? <Loader /> : (
+    return ( isLoading ? <RHQLoader message={"Creating form..."}/> : (
         <div className="form">
             <span className="form-header">Order Form</span>
             <span className="form-label">Customer's name</span>
@@ -460,7 +460,7 @@ const SubmitOrderForm = (props) => {
             {canSubmit()
                 ? activeButton()
                 : submitting
-                    ? <Loader />
+                    ? <RHQLoader message={"Submitting..."}/>
                     : inactiveButton()}
         </div>
 ))
