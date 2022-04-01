@@ -15,6 +15,7 @@ import RHQLoader from "../RHQLoader";
 
 const SubmitOrderForm = (props) => {
     const [customerName, setCustomerName] = useState("");
+    const [address, setAddress] = useState("")
     const [amount, setAmount] = useState("$0.00")
     const [stamps, setStamps] = useState("$0.60")
     const [remarks, setRemarks] = useState("Pending")
@@ -244,6 +245,7 @@ const SubmitOrderForm = (props) => {
                     stamps: stamps,
                     remarks: remarks,
                     bossName: bossName.toUpperCase(),
+                    address: address,
                     cog: item.obj.cost
                 }
                 await postRequest(apiEndpoint + '/order', order)
@@ -433,6 +435,8 @@ const SubmitOrderForm = (props) => {
             <span className="form-label">Customer's name</span>
             <input className="input-box" type="text" onChange={e => verifyAndSetCustomerName(e.target.value)}/>
             {isInBlacklist && <span className="warning-message">Customer in blacklist!</span>}
+            <span className="form-label">Mailing Address</span>
+            <input className="input-box" type="text" onChange={e => setAddress(e.target.value)}/>
             <span className="form-label">Search Item</span>
             <input className="input-box" placeholder="Start typing to search..." type="text" value={searchQuery} onChange={e => search(e.target.value)}/>
             <span className="form-label">Selected Items</span>
