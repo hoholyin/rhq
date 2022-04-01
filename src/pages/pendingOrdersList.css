@@ -50,8 +50,24 @@
     flex-direction: column;
 }
 
+.buttons-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.print-mailslip-button {
+    padding-left: 10px;
+    cursor: pointer;
+}
+
+.print-button {
+    width: 3vmin;
+}
+
 .checkbox-container {
     padding-left: 10px;
+    cursor: pointer;
 }
 
 .pending-order-code {

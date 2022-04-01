@@ -1,5 +1,7 @@
 import React from "react";
 import "./pendingOrdersList.css"
+import print from "../assets/print_icon.png";
+import {generateMailSlip} from "../mailslip";
 
 
 const PendingOrdersList = (props) => {
@@ -30,8 +32,13 @@ const PendingOrdersList = (props) => {
                                 {e.name + " (" + e.boss + ")"}
                             </div>
                         </div>
-                        <div className="checkbox-container" key={id} onClick={(cb) => props.elementOnClick({row: e.row, val: cb.target.checked})}>
-                            <input type="checkbox" id={id} checked={e.selected}  className="checkbox"/>
+                        <div className="buttons-container">
+                            <div className="checkbox-container" key={id} onClick={(cb) => props.elementOnClick({row: e.row, val: cb.target.checked})}>
+                                <input type="checkbox" id={id} checked={e.selected}  className="checkbox"/>
+                            </div>
+                            <div className="print-mailslip-button" key={id} onClick={() => generateMailSlip(e)}>
+                                <img src={print} className="print-button" alt="print"/>
+                            </div>
                         </div>
                     </div>
                 )
