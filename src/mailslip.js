@@ -5,14 +5,17 @@ const { jsPDF } = require("jspdf")
 export const generateMailSlip = (order) => {
     const doc = new jsPDF('l', "mm", [148, 105])
 
-    doc.addImage(logoBase64, "png", 10, 32, 40, 40)
-    doc.text("Mailing Address:\n\n" + formatAddress(order.addr), 60, 40)
+    doc.addImage(logoBase64, "png", 10, 37, 30, 30)
+    doc.text("Mailing Address:\n\n" + formatAddress(order.addr), 43, 40)
     doc.save(order.invoice + ".pdf")
 }
 
 const formatAddress = (addr) => {
     let formatted = addr.split(" ")
     formatted = formatted.map((e) => {
+        if (e.includes("#")) {
+            return "\n" + e
+        }
         if (e.includes("-") && e.charAt(0) !== '#') {
             return "\n#" + e
         }
