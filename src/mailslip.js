@@ -6,13 +6,12 @@ export const generateMailSlip = (order) => {
     const doc = new jsPDF('l', "mm", [148, 105])
 
     doc.addImage(logoBase64, "png", 10, 32, 40, 40)
-    doc.text("Mailing Address:\n\n" + formatAddress(order.addr), 60, 45)
+    doc.text("Mailing Address:\n\n" + formatAddress(order.addr), 60, 40)
     doc.save(order.invoice + ".pdf")
 }
 
 const formatAddress = (addr) => {
     let formatted = addr.split(" ")
-    console.log(formatted)
     formatted = formatted.map((e) => {
         if (e.includes("-") && e.charAt(0) !== '#') {
             return "\n#" + e
@@ -23,15 +22,19 @@ const formatAddress = (addr) => {
         if (e.length === 6 && !isNaN(e)) {
             return "S(" + e + ")"
         }
-        return e
+        if (e.toUpperCase() === "BLK" || e.toUpperCase() === "BLOCK") {
+            return "\n" + "Blk"
+        }
+        if (e.length > 0 && !isNaN(e.charAt(0))) {
+            return e
+        }
+        return e.charAt(0).toUpperCase() + e.slice(1)
     })
-    console.log(formatted)
     formatted = formatted.map((e) => {
         if (e.includes("(") && e.includes(")")) {
             return "\n" + e
         }
         return e
     })
-    console.log(formatted)
-    return formatted.join(" ")
+    return formatted.join(" ").trim()
 }
