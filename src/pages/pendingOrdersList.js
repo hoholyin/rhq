@@ -36,7 +36,7 @@ const PendingOrdersList = (props) => {
                             <div className="checkbox-container" key={id} onClick={(cb) => props.elementOnClick({row: e.row, val: cb.target.checked})}>
                                 <input type="checkbox" id={id} checked={e.selected}  className="checkbox"/>
                             </div>
-                            <div className="print-mailslip-button" key={id} onClick={() => generateMailSlip(e)}>
+                            <div className="print-mailslip-button" key={id} onClick={() => generateMailSlip([e])}>
                                 <img src={print} className="print-button" alt="print"/>
                             </div>
                         </div>

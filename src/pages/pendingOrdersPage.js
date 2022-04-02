@@ -7,6 +7,7 @@ import "./pendingOrdersPage.css"
 import back from "../assets/back.png";
 import refresh from "../assets/refresh.png";
 import PendingOrdersList from "./pendingOrdersList";
+import {generateMailSlip} from "../mailslip";
 
 const PendingOrdersPage = (props) => {
     const [isLoading, setIsLoading] = useState(false)
@@ -68,6 +69,10 @@ const PendingOrdersPage = (props) => {
         return ordersList.filter((obj) => obj.selected)
     }
 
+    const printSelection = () => {
+        generateMailSlip(getSelectedOrders())
+    }
+
     const selectAllCheckbox = () => {
         const updatedOrders = [...ordersList]
         setOrdersList(updatedOrders.map((o) => {
@@ -76,6 +81,10 @@ const PendingOrdersPage = (props) => {
                 selected: true
             }
         }))
+    }
+
+    const shouldShowPrintButton = () => {
+        return getSelectedOrders().length > 0
     }
 
     const canSubmit = () => {
@@ -109,8 +118,9 @@ const PendingOrdersPage = (props) => {
             </div>
             {isLoading
                 ? <RHQLoader message={"Fetching pending orders..."}/>
-                : <div className="App">
+                : <div className="pending-orders">
                     <div className="form-button" onClick={selectAllCheckbox}>Select All Orders</div>
+                    {shouldShowPrintButton() && <div className="form-button" onClick={printSelection}>Print Selected Orders</div>}
                     <div className="pending-orders-list-container">
                         <PendingOrdersList pendingOrdersList={ordersList} isMobile={isMobile}
                                            elementOnClick={selectItem}/>

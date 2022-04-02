@@ -2,17 +2,33 @@ import {logoBase64} from "./common";
 
 const { jsPDF } = require("jspdf")
 
-export const generateMailSlip = (order) => {
+export const generateMailSlip = (orders) => {
+    if (orders.length === 0) {
+        return
+    }
+    const filename = orders[0].invoice
     const doc = new jsPDF('l', "mm", [148, 105])
+    populateMailSlip(doc, orders[0])
+    orders.shift()
 
+    orders.forEach((order) => {
+        doc.addPage([148, 105], "l")
+        populateMailSlip(doc, order)
+    })
+    doc.save(filename + ".pdf")
+}
+
+const populateMailSlip = (doc, order) => {
     doc.addImage(logoBase64, "png", 10, 37, 30, 30)
     doc.text("Mailing Address:\n\n" + formatAddress(order.addr), 43, 40)
-    doc.save(order.invoice + ".pdf")
 }
 
 const formatAddress = (addr) => {
+    addr = addr.replace("\n", " ")
+    addr = addr.replace(",", " ")
     let formatted = addr.split(" ")
     formatted = formatted.map((e) => {
+        e = e.trim()
         if (e.includes("#")) {
             return "\n" + e
         }
