@@ -24,7 +24,6 @@ const populateMailSlip = (doc, order) => {
 }
 
 const formatAddress = (addr) => {
-    addr = addr.replace("\n", " ")
     addr = addr.replace(",", " ")
     let formatted = addr.split(" ")
     formatted = formatted.map((e) => {
