@@ -19,8 +19,8 @@ export const generateMailSlip = (orders) => {
 }
 
 const populateMailSlip = (doc, order) => {
-    doc.addImage(logoBase64, "png", 10, 37, 30, 30)
-    doc.text("Mailing Address:\n\n" + formatAddress(order.addr), 43, 40)
+    doc.addImage(logoBase64, "png", 15, 37, 30, 30)
+    doc.text("Mailing Address:\n\n" + formatAddress(order.addr), 48, 40)
 }
 
 const formatAddress = (addr) => {
