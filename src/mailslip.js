@@ -7,12 +7,12 @@ export const generateMailSlip = (orders) => {
         return
     }
     const filename = orders[0].invoice
-    const doc = new jsPDF('l', "mm", [148, 105])
+    const doc = new jsPDF('l', "mm", [148, 130])
     populateMailSlip(doc, orders[0])
     orders.shift()
 
     orders.forEach((order) => {
-        doc.addPage([148, 105], "l")
+        doc.addPage([148, 130], "l")
         populateMailSlip(doc, order)
     })
     doc.save(filename + ".pdf")
