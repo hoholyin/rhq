@@ -7,14 +7,14 @@ export const generateMailSlip = (orders) => {
         return
     }
     const filename = orders[0].invoice
-    const doc = new jsPDF('l', "mm", [180, 105])
+    const doc = new jsPDF('l', "mm", [190, 105])
     doc.setFont('Helvetica', 'bold')
-    doc.setFontSize(20)
+    doc.setFontSize(30)
     populateMailSlip(doc, orders[0])
     orders.shift()
 
     orders.forEach((order) => {
-        doc.addPage([180, 105], "l")
+        doc.addPage([190, 105], "l")
         populateMailSlip(doc, order)
     })
     doc.save(filename + ".pdf")
@@ -22,7 +22,7 @@ export const generateMailSlip = (orders) => {
 
 const populateMailSlip = (doc, order) => {
     doc.addImage(logoBase64, "png", 15, 37, 30, 30)
-    doc.text("Mailing Address:\n\n" + formatAddress(order.addr), 48, 40)
+    doc.text("Mailing Address:\n\n" + formatAddress(order.addr), 48, 20)
 }
 
 const formatAddress = (addr) => {
