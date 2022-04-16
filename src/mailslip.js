@@ -8,6 +8,8 @@ export const generateMailSlip = (orders) => {
     }
     const filename = orders[0].invoice
     const doc = new jsPDF('l', "mm", [180, 105])
+    doc.setFont('Helvetica', 'bold')
+    doc.setFontSize(20)
     populateMailSlip(doc, orders[0])
     orders.shift()
 
