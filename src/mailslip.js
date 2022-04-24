@@ -8,8 +8,6 @@ export const generateMailSlip = (orders) => {
     }
     const filename = orders[0].invoice
     const doc = new jsPDF('l', "mm", [190, 105])
-    doc.setFont('Helvetica', 'bold')
-    doc.setFontSize(30)
     populateMailSlip(doc, orders[0])
     orders.shift()
 
@@ -21,7 +19,13 @@ export const generateMailSlip = (orders) => {
 }
 
 const populateMailSlip = (doc, order) => {
+    console.log(order)
     doc.addImage(logoBase64, "png", 15, 37, 30, 30)
+    doc.setFont('Helvetica')
+    doc.setFontSize(8)
+    doc.text(order.code, 48, 10)
+    doc.setFont('Helvetica', 'bold')
+    doc.setFontSize(28)
     doc.text("Mailing Address:\n\n" + formatAddress(order.addr), 48, 20)
 }
 
@@ -41,7 +45,10 @@ const formatAddress = (addr) => {
         if (e.toUpperCase() === "SINGAPORE") {
             return ""
         }
-        if (e.length === 6 && !isNaN(e)) {
+        if ((e.length === 6 && !isNaN(e)) || (e.length === 7 && !isNaN(e.substring(1)))) {
+            while (e.length > 6) {
+                e = e.substring(1)
+            }
             return "S(" + e + ")"
         }
         if (e.toUpperCase() === "BLK" || e.toUpperCase() === "BLOCK") {
