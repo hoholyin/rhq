@@ -26,7 +26,8 @@ const populateMailSlip = (doc, order) => {
     doc.text(order.code, 48, 10)
     doc.setFont('Helvetica', 'bold')
     doc.setFontSize(28)
-    doc.text("Mailing Address:\n\n" + formatAddress(order.addr), 48, 20)
+    const addr = order.addr ? order.addr : ""
+    doc.text("Mailing Address:\n\n" + formatAddress(addr), 48, 20)
 }
 
 const formatAddress = (addr) => {
