@@ -21,10 +21,10 @@ export const generateMailSlip = (orders) => {
 const populateMailSlip = (doc, order) => {
     console.log(order)
     doc.addImage(logoBase64, "png", 15, 37, 30, 30)
-    doc.setFont('Helvetica')
+    doc.setFont('Courier')
     doc.setFontSize(8)
     doc.text(order.code, 48, 10)
-    doc.setFont('Helvetica', 'bold')
+    doc.setFont('Courier', 'bold')
     doc.setFontSize(28)
     const addr = order.addr ? order.addr : ""
     doc.text("Mailing Address:\n\n" + formatAddress(addr), 48, 20)
@@ -66,5 +66,23 @@ const formatAddress = (addr) => {
         }
         return e
     })
-    return formatted.join(" ").trim()
+    formatted = formatted.join(" ").trim()
+    // smart indent
+    let lines = formatted.split("\n")
+    let formattedLines = []
+    lines.forEach((line) => {
+        const words = line.split(" ")
+        let window = ""
+        let next = 0
+        while (next !== -1) {
+            while (next !== -1  && (window + " " + words[next]).length < 23) {
+                window += " " + words[next]
+                next = next >= words.length - 1 ? -1 : next + 1
+            }
+            formattedLines.push(window.trimLeft())
+            window = ""
+        }
+    })
+    formattedLines = formattedLines.filter(l => l !== "")
+    return formattedLines.join("\n")
 }
