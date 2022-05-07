@@ -21,8 +21,8 @@ export const generateMailSlip = (orders) => {
 const populateMailSlip = (doc, order) => {
     console.log(order)
     doc.addImage(logoBase64, "png", 15, 37, 30, 30)
-    doc.setFont('Courier')
-    doc.setFontSize(8)
+    doc.setFont('Courier', 'bold')
+    doc.setFontSize(14)
     doc.text(order.code, 48, 10)
     doc.setFont('Courier', 'bold')
     doc.setFontSize(28)
