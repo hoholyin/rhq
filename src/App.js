@@ -4,6 +4,7 @@ import SubmitOrderPage from "./pages/submitOrderPage";
 import OrderSubmittedPage from "./pages/orderSubmittedPage";
 import CheckInventoryPage from "./pages/checkInventoryPage";
 import AddExpensesPage from "./pages/addExpensesPage";
+import AddPurchasePage from "./pages/addPurchasePage";
 import PendingOrdersPage from "./pages/pendingOrdersPage";
 
 function App() {
@@ -30,6 +31,10 @@ function App() {
             case "addExpenses":
                 return (
                     <AddExpensesPage navigate={setCurrentPage}/>
+                )
+            case "addPurchase":
+                return (
+                    <AddPurchasePage navigate={setCurrentPage}/>
                 )
             case "orderSubmitted":
                 return (

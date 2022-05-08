@@ -17,6 +17,9 @@ const Home = (props) => {
             <div className="button" onClick={() => props.navigate("addExpenses")}>
                 Add an Expense
             </div>
+            <div className="button" onClick={() => props.navigate("addPurchase")}>
+                Add a Purchase
+            </div>
         </div>
     )
 }

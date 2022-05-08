@@ -1,0 +1,21 @@
+
+.button-item-name {
+    color: #05c37b;
+    font-family: Lato;
+    font-size: 2vh;
+}
+
+.purchase-item-header-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.purchase-item-header {
+    color: #05c37b;
+    font-family: Lato;
+    font-size: 2.5vh;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+}
