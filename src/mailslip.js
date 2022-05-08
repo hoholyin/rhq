@@ -23,7 +23,7 @@ const populateMailSlip = (doc, order) => {
     doc.addImage(logoBase64, "png", 15, 37, 30, 30)
     doc.setFont('Courier', 'bold')
     doc.setFontSize(14)
-    doc.text(order.code, 48, 10)
+    doc.text(order.code, 10, 10)
     doc.setFont('Courier', 'bold')
     doc.setFontSize(28)
     const addr = order.addr ? order.addr : ""
