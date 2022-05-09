@@ -1,11 +1,24 @@
 import React, {useEffect, useState} from "react";
-import {getRequest} from "../requestBuilder";
-import {apiEndpoint} from "../common";
+import {getRequest, postRequest} from "../requestBuilder";
+import {
+    apiEndpoint,
+    checkItemRow, codeExists,
+    createCode, generateMonth, generateNextCashInOutIndexNumber,
+    generateTodayDate,
+    isBossCorrect,
+    isInteger,
+    isPrice, toLocObjectArray, toLocString,
+    updatePrice
+} from "../common";
 import cross from "../assets/cross.png";
 import RHQLoader from "../RHQLoader";
 
 const AddPurchaseForm = (props) => {
     const [isLoading, setIsLoading] = useState(false)
+    const [bossName, setBossName] = useState("")
+    const [isWarningMessageVisible, setWarningMessageVisible] = useState(false)
+    const [warningMessage, setWarningMessage] = useState("")
+
     const [supplier, setSupplier] = useState("")
     const [invoiceNumber, setInvoiceNumber] = useState("")
     const [categoryList, setCategoryList] = useState([])
@@ -45,13 +58,21 @@ const AddPurchaseForm = (props) => {
             brand: "",
             model: "",
             color: "",
-            desc: ""
+            desc: "",
+            total_amt: "$",
+            qty: "",
         }]
         setItemList(newItemList)
     }
 
     const setProperty = (index, property, value) => {
         const oldItemList = [... itemList]
+        if (property === "total_amt" && !isPrice(value)) {
+            return
+        }
+        if (property === "qty" && !isInteger(value) && value !== "") {
+            return
+        }
         oldItemList[index][property] = value
         setItemList(oldItemList)
     }
@@ -112,13 +133,106 @@ const AddPurchaseForm = (props) => {
                 <span className="form-label">Description</span>
                 <input className="input-box" type="text" value={itemList[index].desc} onChange={e => setProperty(index, "desc", e.target.value)}/>
                 {propertyListComponent(index, "desc", descsList)}
+                <span className="form-label">Total Amount</span>
+                <input className="input-box" type="text" value={itemList[index].total_amt} onChange={e => setProperty(index, "total_amt", e.target.value)}/>
+                <span className="form-label">Quantity</span>
+                <input className="input-box" type="text" value={itemList[index].qty} onChange={e => setProperty(index, "qty", e.target.value)}/>
             </div>
         )
     }
 
+    const submitPurchase = async () => {
+        setSubmitting(true)
+        const correctBoss = await isBossCorrect(bossName)
+        if (!correctBoss) {
+            setWarningMessage("Incorrect boss")
+            setWarningMessageVisible(true)
+            setSubmitting(false)
+            return
+        }
+        const itemListCoded = itemList.map((item) => {
+            item.code = createCode(item.category, item.brand, item.model, item.color, item.desc)
+            return item
+        })
+        // update new cost first
+        const today = generateTodayDate()
+        for (let i = 0; i < itemListCoded.length; i++) {
+            const item = itemListCoded[i]
+            const itemExists = await codeExists(item.code)
+            if (!itemExists) {
+                const addItemObj = {
+                    category: item.category.toUpperCase(),
+                    brand: item.brand.toUpperCase(),
+                    model: item.model.toUpperCase(),
+                    color: item.color.toUpperCase(),
+                    desc: item.desc.toUpperCase(),
+                    month: generateMonth()
+                }
+                await postRequest(apiEndpoint + '/inventory', addItemObj)
+            }
+            const data = {
+                code: item.code,
+                total_amt: item.total_amt,
+                newQty: item.qty
+            }
+            await postRequest(apiEndpoint + "/updateCost", data)
+        }
+
+        // update purchases
+        for (let i = 0; i < itemListCoded.length; i++) {
+            const item = itemListCoded[i]
+            const data = {
+                supplier: supplier,
+                invoice_no: invoiceNumber,
+                category: item.category,
+                brand: item.brand,
+                detailed: item.model,
+                color: item.color,
+                desc: item.desc,
+                invoice_date: today,
+                total_amt: item.total_amt,
+                qty: item.qty
+            }
+            await postRequest(apiEndpoint + "/purchases", data)
+        }
+        // update new locations
+        for (let i = 0; i < itemListCoded.length; i++) {
+            const item = itemListCoded[i]
+            const itemRow = await checkItemRow(item.code)
+            const currLocationRes = await postRequest(apiEndpoint + '/inventoryGetLoc', {row: itemRow})
+            const currLocation = toLocObjectArray(currLocationRes.data.inventoryLoc)
+            let newLocations = [... currLocation, {name: "DE", qty: item.qty}]
+            const updatedNewLocationsString = toLocString(newLocations)
+            await postRequest(apiEndpoint + '/inventoryUpdateLoc', {row: itemRow, location: updatedNewLocationsString})
+        }
+
+        // add cce_out
+        for (let i = 0; i < itemListCoded.length; i++) {
+            const item = itemListCoded[i]
+            const lastCceIndexData = await getRequest(apiEndpoint + "/cce_out")
+            let lastCashOutIndex = lastCceIndexData.data.lastCashOutIndex
+            if (!lastCashOutIndex.startsWith("CO")) {
+                lastCashOutIndex = "CO000"
+            }
+            const lastCashOutRow = lastCceIndexData.data.row
+            const currCashOutIndex = generateNextCashInOutIndexNumber(lastCashOutIndex)
+            const currCashOutRow = parseInt(lastCashOutRow) + 1
+            const createLastCashOutObject = {
+                indexNumber: currCashOutIndex,
+                date: today,
+                description: item.code,
+                amount: item.total_amt,
+                remarks: "NA",
+                row: currCashOutRow
+            }
+            await postRequest(apiEndpoint + '/cce_out', createLastCashOutObject)
+        }
+        props.navigate("orderSubmitted")
+    }
+
     const activeButton = () => {
         return (
-            <div className="form-button" onClick={() => {}}>Submit Purchase</div>
+            <div className="form-button" onClick={submitPurchase}>Submit Purchase</div>
         )
     }
 
@@ -127,6 +241,13 @@ const AddPurchaseForm = (props) => {
             <div className="form-button-inactive">Submit Purchase</div>
         )
     }
+
+    const warningMessageComponent = (warningMessage) => {
+        return (
+            <span className="warning-message">{warningMessage}</span>
+        )
+    }
+
     return (
         <div className="form">
             <span className="form-header">Purchase Form</span>
@@ -140,6 +261,9 @@ const AddPurchaseForm = (props) => {
             <div className="search-item-row" onClick={() => addItem()}>
                 <span className="button-item-name">+ Add new item</span>
             </div>
+            <span className="form-label">Boss in-charge</span>
+            <input className="input-box" type="text" onChange={e => setBossName(e.target.value)}/>
+            {isWarningMessageVisible && warningMessageComponent(warningMessage)}
             {canSubmit()
                 ? activeButton()
                 : submitting

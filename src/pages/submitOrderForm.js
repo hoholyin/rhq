@@ -1,6 +1,6 @@
 import {
     addPrice,
-    apiEndpoint,
+    apiEndpoint, checkItemRow,
     generateNextCashInOutIndexNumber,
     generateNextInvoiceNumber,
     generateTodayDate, isBossCorrect, isInteger, isPrice, itemExists,
@@ -90,10 +90,6 @@ const SubmitOrderForm = (props) => {
         return blacklistObject.data.allNames
     }
 
-    const checkItemRow = async (code) => {
-        const itemRowResult = await postRequest(apiEndpoint + '/inventoryRow', {code: code})
-        return itemRowResult.data.row
-    }
 
     const setQty = (code, qty) => {
         if (!isInteger(qty) || parseInt(qty) < 0) {

@@ -1,4 +1,4 @@
-import {createRequestOptions} from "./requestBuilder";
+import {createRequestOptions, postRequest} from "./requestBuilder";
 
 export const generateTodayDate = () => {
     const year = new Date().getFullYear().toString()
@@ -6,6 +6,31 @@ export const generateTodayDate = () => {
     const day = new Date().getDate().toString()
     return month + "/" + day + "/" + year
 }
+
+export const generateMonth = () => {
+    const year = new Date().getFullYear().toString()
+    const month = (new Date().getMonth() + 1).toString()
+    return month + "/1/" + year
+}
+
+export const createCode = (cat, brand, detailed, colour, desc) => {
+    return cat.toUpperCase() + "-"
+        + brand.toUpperCase() + "-"
+        + detailed.toUpperCase() + "-"
+        + colour.toUpperCase() + "-"
+        + desc.toUpperCase()
+}
+
+export const checkItemRow = async (code) => {
+    const itemRowResult = await postRequest(apiEndpoint + '/inventoryRow', {code: code})
+    return itemRowResult.data.row
+}
+
+export const codeExists = async (code) => {
+    const codeExists = await postRequest(apiEndpoint + '/checkCodeExists', {code: code})
+    return codeExists.data.codeExists
+}
+
 export const generateNextInvoiceNumber = (lastInvoiceNumber) => {
     const year = lastInvoiceNumber.substring(0, 4)
     const month = lastInvoiceNumber.substring(4, 6)
