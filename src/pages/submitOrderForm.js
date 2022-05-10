@@ -360,20 +360,7 @@ const SubmitOrderForm = (props) => {
     const selectedCodeModal = () => {
         const allProcessedWords = items.map((item) => {
             const code = item.obj.code
-            let processedWord = "";
-            for (let i = 0; i < code.length; i++) {
-                if (processedWord.length === 0 || code.length === i + 1) {
-                    processedWord += code[i]
-                    continue;
-                }
-                const lastChar = processedWord.slice(-1);
-                const nextChar = code[i];
-                if (lastChar.match(/[0-9|a-z]/) && nextChar.match(/[A-Z]/)) {
-                    processedWord += "\n"
-                }
-                processedWord += code[i]
-            }
-            processedWord = processedWord.replaceAll("NA", "")
+            const processedWord = item.obj.code.replace(/NA-/, "").replace(/-/g, "\n")
             return { processedWord: processedWord, code: code }
         })
         return (
