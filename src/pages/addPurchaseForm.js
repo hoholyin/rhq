@@ -8,7 +8,6 @@ import {
     isBossCorrect,
     isInteger,
     isPrice, toLocObjectArray, toLocString,
-    updatePrice
 } from "../common";
 import cross from "../assets/cross.png";
 import RHQLoader from "../RHQLoader";
@@ -93,11 +92,25 @@ const AddPurchaseForm = (props) => {
         )
     }
 
+    const itemIsValid = (e) => {
+        return e.category !== ""
+            && e.brand !== ""
+            && e.model !== ""
+            && e.color !== ""
+            && e.desc !== ""
+            && e.total_amt !== "$"
+            && !isNaN(e.qty)
+            && parseInt(e.qty) > 0
+    }
+
     const canSubmit = () => {
-        const allBlanksFilled = itemList.map((e) => {
-            return e.category !== "" && e.brand !== "" && e.model !== "" && e.color !== "" && e.desc !== ""
-        }).filter((b) => !b).length === 0
-        return itemList.length > 0 && allBlanksFilled && supplier !== "" && invoiceNumber !== ""
+        const allBlanksFilled = itemList.map((e) => itemIsValid(e)).filter((b) => !b).length === 0
+        return itemList.length > 0
+            && bossName !== ""
+            && allBlanksFilled
+            && supplier !== ""
+            && invoiceNumber !== ""
+            && submitting === false
     }
 
     const deleteItem = (index) => {
@@ -151,7 +164,13 @@ const AddPurchaseForm = (props) => {
             return
         }
         const itemListCoded = itemList.map((item) => {
-            item.code = createCode(item.category, item.brand, item.model, item.color, item.desc)
+            item.code = createCode(
+                item.category.toUpperCase(),
+                item.brand.toUpperCase(),
+                item.model.toUpperCase(),
+                item.color.toUpperCase(),
+                item.desc.toUpperCase()
+            )
             return item
         })
         // update new cost first
@@ -248,28 +267,29 @@ const AddPurchaseForm = (props) => {
         )
     }
 
-    return (
-        <div className="form">
-            <span className="form-header">Purchase Form</span>
-            <span className="form-label">Supplier</span>
-            <input className="input-box" type="text" onChange={e => setSupplier(e.target.value)}/>
-            <span className="form-label">Invoice no</span>
-            <input className="input-box" type="text" onChange={e => setInvoiceNumber(e.target.value)}/>
-            {itemList.map((e) => {
-                return itemPropertiesComponent(e.index)
-            })}
-            <div className="search-item-row" onClick={() => addItem()}>
-                <span className="button-item-name">+ Add new item</span>
+    return ( isLoading ? <RHQLoader message={"Creating form..."}/> : (
+            <div className="form">
+                <span className="form-header">Purchase Form</span>
+                <span className="form-label">Supplier</span>
+                <input className="input-box" type="text" onChange={e => setSupplier(e.target.value)}/>
+                <span className="form-label">Invoice no</span>
+                <input className="input-box" type="text" onChange={e => setInvoiceNumber(e.target.value)}/>
+                {itemList.map((e) => {
+                    return itemPropertiesComponent(e.index)
+                })}
+                <div className="search-item-row" onClick={() => addItem()}>
+                    <span className="button-item-name">+ Add new item</span>
+                </div>
+                <span className="form-label">Boss in-charge</span>
+                <input className="input-box" type="text" onChange={e => setBossName(e.target.value)}/>
+                {isWarningMessageVisible && warningMessageComponent(warningMessage)}
+                {canSubmit()
+                    ? activeButton()
+                    : submitting
+                        ? <RHQLoader message={"Submitting..."}/>
+                        : inactiveButton()}
             </div>
-            <span className="form-label">Boss in-charge</span>
-            <input className="input-box" type="text" onChange={e => setBossName(e.target.value)}/>
-            {isWarningMessageVisible && warningMessageComponent(warningMessage)}
-            {canSubmit()
-                ? activeButton()
-                : submitting
-                    ? <RHQLoader message={"Submitting..."}/>
-                    : inactiveButton()}
-        </div>
+        )
     )
 }
 
