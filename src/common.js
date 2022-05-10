@@ -79,7 +79,6 @@ export const isPrice = (price) => {
     }
 }
 
-
 export const addPrice = (p1, p2) => {
     if (!isPrice(p1) || !isPrice(p2)) {
         return "$0.00"
@@ -106,7 +105,7 @@ export const toLocObjectArray = (locString) => {
     let parts = locString.split(",")
     return parts.map((e) => e.trim())
         .map((e) => {
-            const name = e.split("(")[0]
+            const name = e.split("(")[0].trim()
             const qty = e.split("(")[1].split(")")[0]
             return {
                 name: name,

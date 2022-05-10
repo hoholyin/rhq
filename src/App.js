@@ -6,6 +6,8 @@ import CheckInventoryPage from "./pages/checkInventoryPage";
 import AddExpensesPage from "./pages/addExpensesPage";
 import AddPurchasePage from "./pages/addPurchasePage";
 import PendingOrdersPage from "./pages/pendingOrdersPage";
+import ManageOrdersPage from "./pages/managePurchasePage";
+import ManagePurchasePage from "./pages/managePurchasePage";
 
 function App() {
     const setPage = (page) => {
@@ -35,6 +37,10 @@ function App() {
             case "addPurchase":
                 return (
                     <AddPurchasePage navigate={setCurrentPage}/>
+                )
+            case "managePurchase":
+                return (
+                    <ManagePurchasePage navigate={setCurrentPage}/>
                 )
             case "orderSubmitted":
                 return (
