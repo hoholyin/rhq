@@ -228,6 +228,9 @@ const SubmitOrderForm = (props) => {
                 const item = items[i]
                 const getOrdersInfo = await getRequest(apiEndpoint + "/orders")
                 const lastInvoiceNumber = getOrdersInfo.data.lastInvoiceNumber
+                const nextSalesRow = (parseInt(getOrdersInfo.data.lastSalesRow) + 1).toString()
+                const netSalesFormula = "=M{}-R{}".replace(/{}/, nextSalesRow)
+                const cogNetFormula = "=T{}*L{}".replace(/{}/, nextSalesRow)
                 const currInvoiceNumber = generateNextInvoiceNumber(lastInvoiceNumber)
                 firstInvoiceNumber = !firstInvoiceNumber ? currInvoiceNumber : firstInvoiceNumber
                 const order = {
@@ -242,7 +245,9 @@ const SubmitOrderForm = (props) => {
                     remarks: remarks,
                     bossName: bossName.toUpperCase(),
                     address: address,
-                    cog: item.obj.cost
+                    cog: item.obj.cost,
+                    netSalesFormula: netSalesFormula,
+                    cogNetFormula: cogNetFormula
                 }
                 await postRequest(apiEndpoint + '/order', order)
             }

@@ -3,7 +3,6 @@ import back from "../assets/back.png";
 import refresh from "../assets/refresh.png";
 import logo from "../assets/logo_transparent.png";
 import RHQLoader from "../RHQLoader";
-import PendingOrdersList from "./pendingOrdersList";
 import {apiEndpoint, isBossCorrect, toLocObjectArray, toLocString} from "../common";
 import {getRequest, postRequest} from "../requestBuilder";
 import PendingPurchaseList from "./pendingPurchaseList";
