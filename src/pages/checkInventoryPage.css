@@ -58,6 +58,52 @@
     white-space: pre-line;
 }
 
+.selling-price-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.selling-price-header {
+    color: azure;
+    font-size: 17px;
+    font-family: Lato-Bold;
+    margin-bottom: 5px;
+}
+
+.confirmation-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.confirmation-input-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.form-button-confirmation {
+    background-color: #16181c;
+    border-radius: 5px;
+    border-style: solid;
+    border-width: 2px;
+    border-color: #16181C;
+    color: #04AA6D;
+    padding: 5px 20px 5px 20px;
+    font-family: Lato;
+    font-size: 18px;
+}
+
+.form-button-confirmation:hover {
+    border-color: #04AA6D;
+    cursor: pointer;
+}
+
 .inv-selected-item-name {
     font-size: 18px;
     color: #05c37b;
@@ -88,6 +134,7 @@
 .indicator-container {
     display: flex;
     flex-direction: row;
+    margin-bottom: 15px;
 }
 
 .indicator-value {

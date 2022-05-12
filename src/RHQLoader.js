@@ -5,9 +5,11 @@ import "./RHQLoader.css"
 const RHQLoader = (props) => {
     return (
         <div>
+            {props.message.length !== 0 &&
             <div className="loading-message-container">
                 <span className="loading-message">{props.message}</span>
             </div>
+            }
             <Loader type="Bars" color="#04AA6D" height={30} width={200} />
         </div>
     );

@@ -11,6 +11,9 @@
     margin-top: 5px;
     padding: 10px;
     border-radius: 5px;
+    border-width: 2px;
+    border-color: #16181c;
+    border-style: solid;
     font-family: Lato;
     justify-content: space-between;
     padding-bottom: 8px;
@@ -19,8 +22,7 @@
 
 .inventory-list-row:hover {
     cursor: pointer;
-    font-family: Lato-Bold;
-    color: #04AA6D;
+    border-color: #04AA6D;
 }
 
 .inventory-code {

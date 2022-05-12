@@ -1,6 +1,6 @@
 import logo from "../assets/logo_transparent.png";
 import InventoryList from "./InventoryList";
-import {apiEndpoint} from "../common";
+import {apiEndpoint, isBossCorrect, updatePrice} from "../common";
 import {getRequest, postRequest} from "../requestBuilder";
 import React, {useEffect, useState} from "react";
 import "./checkInventoryPage.css"
@@ -17,6 +17,10 @@ const CheckInventoryPage = (props) => {
     const [selectedCode, setSelectedCode] = useState("")
     const [indicatorInformation, setIndicatorInformation] = useState([]);
     const [isLoadingSelection, setIsLoadingSelection] = useState(true);
+    const [sellingPrice, setSellingPrice] = useState("$")
+    const [oldSellingPrice, setOldSellingPrice] = useState("$")
+    const [bossName, setBossName] = useState("")
+    const [submitting, setSubmitting] = useState(false)
 
     useEffect(() => {
         refreshInventory();
@@ -51,7 +55,6 @@ const CheckInventoryPage = (props) => {
             e.name = e.name.replaceAll("Phone case", "")
             return e
         })
-        console.log(allInventories)
         setAllInventories(allInventories)
         setInventoryList(allInventories)
         setIsLoading(false)
@@ -85,6 +88,13 @@ const CheckInventoryPage = (props) => {
                 val: allIndicators[3]
             }
         ];
+        const sellingPriceRequestObj = {
+            code: code
+        }
+        const sellingPriceObj = await postRequest(apiEndpoint + '/getSellingPrice', sellingPriceRequestObj)
+        const sellingPrice = sellingPriceObj.data.sellingPrice
+        setSellingPrice(sellingPrice)
+        setOldSellingPrice(sellingPrice)
         setIndicatorInformation(allIndicatorObjects)
         setSelectedCode(code);
         setIsLoadingSelection(false)
@@ -92,6 +102,40 @@ const CheckInventoryPage = (props) => {
 
     const unselectItem = () => {
         setSelectedCode("")
+    }
+
+    const updateSellingPrice = async () => {
+        setSubmitting(true)
+        const correctBoss = await isBossCorrect(bossName)
+        if (!correctBoss) {
+            setSubmitting(false)
+            return
+        }
+        const dataObject = {
+            code: selectedCode,
+            sellingPrice: sellingPrice
+        }
+        await postRequest(apiEndpoint + "/setSellingPrice", dataObject)
+        const sellingPriceRequestObj = {
+            code: selectedCode
+        }
+        const sellingPriceObj = await postRequest(apiEndpoint + '/getSellingPrice', sellingPriceRequestObj)
+        const localSellingPrice = sellingPriceObj.data.sellingPrice
+        setSellingPrice(localSellingPrice)
+        setOldSellingPrice(localSellingPrice)
+        setSubmitting(false)
+    }
+
+    const confirmationContainer = () => {
+        return (
+            <div className="confirmation-container">
+                <span className="form-label">Boss</span>
+                <div className="confirmation-input-row">
+                    <input className="input-box" type="text" onChange={e => setBossName(e.target.value)}/>
+                    {submitting ? <RHQLoader message={""}/> : <div className="form-button-confirmation" onClick={updateSellingPrice}>Update Price</div> }
+                </div>
+            </div>
+        )
     }
 
     const selectedCodeModal = () => {
@@ -107,15 +151,16 @@ const CheckInventoryPage = (props) => {
                     {indicatorInformation.map((obj) => {
                         return (
                             <div className="indicator-column">
-                                <div className="indicator-header">
-                                    {obj.name}
-                                </div>
-                                <div className="indicator-value">
-                                    {obj.val}
-                                </div>
+                                <div className="indicator-header">{obj.name}</div>
+                                <div className="indicator-value">{obj.val}</div>
                             </div>
                         )
                     })}
+                </div>
+                <div className="selling-price-container">
+                    <span className="selling-price-header">SELLING PRICE</span>
+                    <input className="input-box" type="text" value={sellingPrice} onChange={e => updatePrice(e.target.value, setSellingPrice)}/>
+                    {sellingPrice !== oldSellingPrice && confirmationContainer()}
                 </div>
             </div>
         )
