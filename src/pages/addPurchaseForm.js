@@ -191,9 +191,10 @@ const AddPurchaseForm = (props) => {
             }
             const data = {
                 code: item.code,
-                total_amt: item.total_amt,
+                total_amt: item.total_amt.substring(1), // remove $
                 newQty: item.qty
             }
+            console.log(data)
             await postRequest(apiEndpoint + "/updateCost", data)
         }
 

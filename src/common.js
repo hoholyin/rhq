@@ -208,7 +208,6 @@ export const isBossCorrect = async (bossName) => {
 }
 
 export const updatePrice = (price, callback) => {
-    console.log("here")
     if (!price.startsWith("$")) {
         callback("$")
         return

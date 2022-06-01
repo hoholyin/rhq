@@ -31,7 +31,7 @@ const CheckInventoryPage = (props) => {
         if (searchQuery === "") {
             return
         }
-        const allWords = searchQuery.split(" ")
+        const allWords = searchQuery.split("-")
         const filteredItems = allInventories.filter((e) => {
             for (const word of allWords) {
                 if (!e.code.toLowerCase().includes(word.toLowerCase())) {
