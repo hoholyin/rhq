@@ -53,6 +53,13 @@ export const generateNextInvoiceNumber = (lastInvoiceNumber) => {
     return currYear + currMonth + "001"
 }
 
+export const generateInventoryListName = (code) => {
+    return code.replace(/PHONE CASE/g, "PC")
+        .replace(/SCREEN PROTECTOR/g, "SP")
+        .replace(/PHONE ACCESSORIES-/g, "")
+        .replace(/WATCH ACCESSORIES/g, "WA")
+}
+
 export const generateNextCashInOutIndexNumber = (lastCashInIndex) => {
     let lastCashInIndexNumber = parseInt(lastCashInIndex.substring(2))
     lastCashInIndexNumber += 1

@@ -19,3 +19,13 @@
     flex-direction: row;
     justify-content: flex-start;
 }
+
+.selected-code-modal {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.selected-item-name {
+    text-align: center;
+}

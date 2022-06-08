@@ -186,7 +186,7 @@ const CheckInventoryPage = (props) => {
             <div className="inventory-list-container">
                 {isLoading
                     ? <RHQLoader message={"Getting inventory list..."}/>
-                    :<InventoryList inventoryList={inventoryList} elementOnClick={selectCode}/>}
+                    : <InventoryList inventoryList={inventoryList} elementOnClick={selectCode} nameOnly={false}/>}
             </div>
         </div>
     )

@@ -11,6 +11,7 @@ import {
 } from "../common";
 import cross from "../assets/cross.png";
 import RHQLoader from "../RHQLoader";
+import InventoryList from "./InventoryList";
 
 const AddPurchaseForm = (props) => {
     const [isLoading, setIsLoading] = useState(false)
@@ -25,6 +26,9 @@ const AddPurchaseForm = (props) => {
     const [modelsList, setModelsList] = useState([])
     const [colorsList, setColorsList] = useState([])
     const [descsList, setDescsList] = useState([])
+    const [allInventories, setAllInventories] = useState([]);
+    const [inventoryList, setInventoryList] = useState([]);
+    const [query, setQuery] = useState("");
 
     const [itemList, setItemList] = useState([])
     const [submitting, setSubmitting] = useState(false)
@@ -46,12 +50,39 @@ const AddPurchaseForm = (props) => {
         setModelsList(allModels)
         setColorsList(allColors)
         setDescsList(allDescs)
+        const inventoryListObject = await getRequest(apiEndpoint + '/inventory')
+        const allInventories = inventoryListObject.data.allInventories
+        allInventories.map(e => {
+            e.name = e.code
+            return e
+        })
+        setAllInventories(allInventories)
         setIsLoading(false)
     }
 
-    const addItem = () => {
+    const search = (searchQuery) => {
+        setQuery(searchQuery)
+        if (searchQuery === "") {
+            setInventoryList([])
+            return
+        }
+        const allWords = searchQuery.split(" ")
+        const filteredItems = allInventories.filter((e) => {
+            for (const word of allWords) {
+                if (!e.code.toLowerCase().includes(word.toLowerCase())) {
+                    return false
+                }
+            }
+            return true
+        })
+        console.log(filteredItems[0])
+        setInventoryList(filteredItems)
+    }
+
+    const addItem = (isNewItem) => {
         const oldItemList = itemList
-        const newItemList = [... oldItemList, {
+        const newItemList = [...oldItemList, {
+            newItem: isNewItem,
             index: oldItemList.length,
             category: "",
             brand: "",
@@ -65,7 +96,7 @@ const AddPurchaseForm = (props) => {
     }
 
     const setProperty = (index, property, value) => {
-        const oldItemList = [... itemList]
+        const oldItemList = [...itemList]
         if (property === "total_amt" && !isPrice(value)) {
             return
         }
@@ -114,13 +145,56 @@ const AddPurchaseForm = (props) => {
     }
 
     const deleteItem = (index) => {
-        const oldItemList = [... itemList]
+        const oldItemList = [...itemList]
         const newItemList = oldItemList.filter((e) => e.index !== index).map((e) => {
             e.index = e.index > index ? e.index - 1 : e.index
             return e
         })
         setItemList(newItemList)
     }
+
+    const selectCode = (index, code) => {
+        const allProperties = code.split("-")
+        setProperty(index, "category", allProperties[0])
+        setProperty(index, "brand", allProperties[1])
+        setProperty(index, "model", allProperties[2])
+        setProperty(index, "color", allProperties[3])
+        setProperty(index, "desc", allProperties[4])
+    }
+
+    const generateExistingItem = (index) => {
+        const item = itemList[index]
+        const code = createCode(item.category, item.brand, item.model, item.color, item.desc)
+        if (code === "----") {
+            // have not selected an item
+            return (
+                <div className="purchase-item-inventory-list">
+                    <span className="form-label">Search code</span>
+                    <input className="input-box" type="text" onChange={e => search(e.target.value)}/>
+                    {query === "" ? <div /> : (
+                        <InventoryList inventoryList={inventoryList} elementOnClick={(code) => selectCode(index, code)} nameOnly={true}/>
+                    )}
+                </div>
+            )
+        }
+        const processedCode = code.replace(/-/g, "\n")
+        return (
+            <div className="selected-code-list">
+                <div className="selected-code-modal">
+                    <span className="selected-item-name">{processedCode}</span>
+                    <div className="existing-purchase-container">
+                        <span className="form-label">Total Amount</span>
+                        <input className="input-box" type="text" value={itemList[index].total_amt} onChange={e => setProperty(index, "total_amt", e.target.value)}/>
+                    </div>
+                    <div className="existing-purchase-container">
+                        <span className="form-label">Quantity</span>
+                        <input className="input-box" type="text" value={itemList[index].qty} onChange={e => setProperty(index, "qty", e.target.value)}/>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
 
     const itemPropertiesComponent = (index) => {
         return (
@@ -131,25 +205,32 @@ const AddPurchaseForm = (props) => {
                         <img src={cross} className="remove-selection-icon" alt="logo"/>
                     </div>
                 </div>
-                <span className="form-label">Category</span>
-                <input className="input-box" type="text" value={itemList[index].category} onChange={e => setProperty(index, "category", e.target.value)}/>
-                {propertyListComponent(index, "category", categoryList)}
-                <span className="form-label">Brand</span>
-                <input className="input-box" type="text" value={itemList[index].brand} onChange={e => setProperty(index, "brand", e.target.value)}/>
-                {propertyListComponent(index, "brand", brandsList)}
-                <span className="form-label">Model</span>
-                <input className="input-box" type="text" value={itemList[index].model} onChange={e => setProperty(index, "model", e.target.value)}/>
-                {propertyListComponent(index, "model", modelsList)}
-                <span className="form-label">Colour</span>
-                <input className="input-box" type="text" value={itemList[index].color} onChange={e => setProperty(index, "color", e.target.value)}/>
-                {propertyListComponent(index, "color", colorsList)}
-                <span className="form-label">Description</span>
-                <input className="input-box" type="text" value={itemList[index].desc} onChange={e => setProperty(index, "desc", e.target.value)}/>
-                {propertyListComponent(index, "desc", descsList)}
-                <span className="form-label">Total Amount</span>
-                <input className="input-box" type="text" value={itemList[index].total_amt} onChange={e => setProperty(index, "total_amt", e.target.value)}/>
-                <span className="form-label">Quantity</span>
-                <input className="input-box" type="text" value={itemList[index].qty} onChange={e => setProperty(index, "qty", e.target.value)}/>
+                {!itemList[index].newItem
+                    ? generateExistingItem(index)
+                    : (
+                        <div>
+                            <span className="form-label">Category</span>
+                            <input className="input-box" type="text" value={itemList[index].category} onChange={e => setProperty(index, "category", e.target.value)}/>
+                            {propertyListComponent(index, "category", categoryList)}
+                            <span className="form-label">Brand</span>
+                            <input className="input-box" type="text" value={itemList[index].brand} onChange={e => setProperty(index, "brand", e.target.value)}/>
+                            {propertyListComponent(index, "brand", brandsList)}
+                            <span className="form-label">Model</span>
+                            <input className="input-box" type="text" value={itemList[index].model} onChange={e => setProperty(index, "model", e.target.value)}/>
+                            {propertyListComponent(index, "model", modelsList)}
+                            <span className="form-label">Colour</span>
+                            <input className="input-box" type="text" value={itemList[index].color} onChange={e => setProperty(index, "color", e.target.value)}/>
+                            {propertyListComponent(index, "color", colorsList)}
+                            <span className="form-label">Description</span>
+                            <input className="input-box" type="text" value={itemList[index].desc} onChange={e => setProperty(index, "desc", e.target.value)}/>
+                            {propertyListComponent(index, "desc", descsList)}
+                            <span className="form-label">Total Amount</span>
+                            <input className="input-box" type="text" value={itemList[index].total_amt} onChange={e => setProperty(index, "total_amt", e.target.value)}/>
+                            <span className="form-label">Quantity</span>
+                            <input className="input-box" type="text" value={itemList[index].qty} onChange={e => setProperty(index, "qty", e.target.value)}/>
+                        </div>
+                    )
+                }
             </div>
         )
     }
@@ -194,7 +275,6 @@ const AddPurchaseForm = (props) => {
                 total_amt: item.total_amt.substring(1), // remove $
                 newQty: item.qty
             }
-            console.log(data)
             await postRequest(apiEndpoint + "/updateCost", data)
         }
 
@@ -278,8 +358,11 @@ const AddPurchaseForm = (props) => {
                 {itemList.map((e) => {
                     return itemPropertiesComponent(e.index)
                 })}
-                <div className="search-item-row" onClick={() => addItem()}>
-                    <span className="button-item-name">+ Add new item</span>
+                <div className="search-item-row" onClick={() => addItem(true)}>
+                    <span className="button-item-name">+ Add new product</span>
+                </div>
+                <div className="search-item-row" onClick={() => addItem(false)}>
+                    <span className="button-item-name">+ Add existing product</span>
                 </div>
                 <span className="form-label">Boss in-charge</span>
                 <input className="input-box" type="text" onChange={e => setBossName(e.target.value)}/>

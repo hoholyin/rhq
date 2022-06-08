@@ -1,5 +1,6 @@
 import React from "react";
 import "./inventoryList.css"
+import {generateInventoryListName} from "../common";
 
 const InventoryList = (props) => {
     if (props.inventoryList.length === 0) {
@@ -17,11 +18,16 @@ const InventoryList = (props) => {
                 return (
                     <div className="inventory-list-row" onClick={() => props.elementOnClick(e.code)}>
                         <div className="inventory-code">
-                            {e.name}
+                            {generateInventoryListName(e.name)}
                         </div>
-                        <div className="inventory-location">
-                            {e.loc}
-                        </div>
+                        {props.nameOnly
+                            ? null
+                            : (
+                                <div className="inventory-location">
+                                    {e.loc}
+                                </div>
+                            )
+                        }
                     </div>
                 )
             })}
