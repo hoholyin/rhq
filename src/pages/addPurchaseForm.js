@@ -75,7 +75,6 @@ const AddPurchaseForm = (props) => {
             }
             return true
         })
-        console.log(filteredItems[0])
         setInventoryList(filteredItems)
     }
 
@@ -177,7 +176,7 @@ const AddPurchaseForm = (props) => {
                 </div>
             )
         }
-        const processedCode = code.replace(/-/g, "\n")
+        const processedCode = code.replace(/-/g, "\n").replace(/NA\n/g, "")
         return (
             <div className="selected-code-list">
                 <div className="selected-code-modal">
