@@ -255,7 +255,8 @@ const SubmitOrderForm = (props) => {
                 const tipsObject = {
                     customer: customerName,
                     invoice_number: firstInvoiceNumber,
-                    tipAmount: tips
+                    tipAmount: tips,
+                    date: today
                 }
                 await postRequest(apiEndpoint + '/addTips', tipsObject)
             }
