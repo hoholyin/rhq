@@ -17,8 +17,11 @@ const InventoryList = (props) => {
             {props.inventoryList.map((e) => {
                 return (
                     <div className="inventory-list-row" onClick={() => props.elementOnClick(e.code)}>
-                        <div className="inventory-code">
-                            {generateInventoryListName(e.name)}
+                        <div className="inventory-list-container">
+                            <span className="inventory-sn">{e.sn}</span>
+                            <div className="inventory-code">
+                                {generateInventoryListName(e.name)}
+                            </div>
                         </div>
                         {props.nameOnly
                             ? null

@@ -179,8 +179,8 @@ const AddPurchaseForm = (props) => {
         const processedCode = code.replace(/-/g, "\n").replace(/NA\n/g, "")
         return (
             <div className="selected-code-list">
-                <div className="selected-code-modal">
-                    <span className="selected-item-name">{processedCode}</span>
+                <div className="purchase-selected-code-modal">
+                    <span className="purchase-selected-item-name">{processedCode}</span>
                     <div className="existing-purchase-container">
                         <span className="form-label">Total Amount</span>
                         <input className="input-box" type="text" value={itemList[index].total_amt} onChange={e => setProperty(index, "total_amt", e.target.value)}/>

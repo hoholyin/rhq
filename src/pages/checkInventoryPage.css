@@ -105,8 +105,12 @@
 }
 
 .inv-selected-item-name {
-    font-size: 18px;
+    font-size: 16px;
     color: #05c37b;
+}
+
+.inv-selected-code-sn {
+    font-size: 18px;
     font-family: Lato-Bold;
 }
 

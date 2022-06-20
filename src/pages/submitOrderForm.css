@@ -39,13 +39,12 @@
 .search-item-row {
     background-color: #16181c;
     margin-bottom: 5px;
-    padding-top: 5px;
-    padding-bottom: 5px;
     border-radius: 5px;
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
+    padding: 5px 10px;
     border-width: 2px;
     border-style: solid;
     border-color: #16181c;
@@ -57,8 +56,19 @@
 }
 
 .search-item-name {
-    font-size: 1.5vh;
+    font-size: 1.2vh;
     color: #05c37b;
+    font-family: Lato-Bold;
+}
+
+.search-item-row-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.search-item-sn {
+    font-size: 18px;
     font-family: Lato-Bold;
 }
 

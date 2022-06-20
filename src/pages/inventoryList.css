@@ -30,8 +30,22 @@
     padding-right: 10px;
 }
 
+.inventory-list-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.inventory-sn {
+    font-size: 15px;
+    font-weight: bold;
+}
+
 .inventory-location {
     font-size: 18px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
 }
 
 @media (max-width: 500px) {

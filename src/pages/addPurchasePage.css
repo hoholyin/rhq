@@ -20,12 +20,12 @@
     justify-content: flex-start;
 }
 
-.selected-code-modal {
+.purchase-selected-code-modal {
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-.selected-item-name {
+.purchase-selected-item-name {
     text-align: center;
 }

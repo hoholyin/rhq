@@ -1,9 +1,9 @@
 import {
     addPrice,
-    apiEndpoint, checkItemRow,
+    apiEndpoint, checkItemRow, containsWord,
     generateNextCashInOutIndexNumber,
     generateNextInvoiceNumber,
-    generateTodayDate, isBossCorrect, isInteger, isPrice, itemExists,
+    generateTodayDate, isBossCorrect, isInteger, isPrice, itemExists, matchingSn,
     toLocObjectArray, toLocString, updatePrice
 } from "../common";
 import tick from "../assets/tick.png";
@@ -74,8 +74,6 @@ const SubmitOrderForm = (props) => {
         const allInventories = inventoryListObject.data.allInventories
         allInventories.map((e) => {
             e.name = e.code
-            e.name = e.name.replaceAll("NA", "")
-            e.name = e.name.replaceAll("Phone accessories", "")
             return e
         })
         setAllInventories(allInventories)
@@ -353,12 +351,7 @@ const SubmitOrderForm = (props) => {
         setSearchQuery(query)
         const allWords = searchQuery.split(" ")
         const filteredItems = allInventories.filter((e) => {
-            for (const word of allWords) {
-                if (!e.code.toLowerCase().includes(word.toLowerCase())) {
-                    return false
-                }
-            }
-            return items.filter((item) => item.code === e.code).length <= 0;
+            return containsWord(e, allWords) || matchingSn(e, query)
         })
         setInventoryList(filteredItems)
     }
@@ -428,14 +421,17 @@ const SubmitOrderForm = (props) => {
             <input className="input-box" type="text" onChange={e => setAddress(e.target.value)}/>
             <span className="form-label">Search Item</span>
             <input className="input-box" placeholder="Start typing to search..." type="text" value={searchQuery} onChange={e => search(e.target.value)}/>
-            <span className="form-label">Selected Items</span>
             {searchQuery !== "" && inventoryList.map((e) => {
                 return (
                     <div className="search-item-row" onClick={() => selectItem(e)}>
-                        <span className="search-item-name">{e.name}</span>
+                        <div className="search-item-row-container">
+                            <span className="search-item-sn">{e.sn}</span>
+                            <span className="search-item-name">{e.name}</span>
+                        </div>
                     </div>
                 )
             })}
+            <span className="form-label">Selected Items</span>
             {items.length > 0 && selectedCodeModal()}
             {items.length === 0 && noItemsModal()}
             <span className="form-label">Net Amount (After discount)</span>

@@ -1,6 +1,6 @@
 import logo from "../assets/logo_transparent.png";
 import InventoryList from "./InventoryList";
-import {apiEndpoint, isBossCorrect, updatePrice} from "../common";
+import {apiEndpoint, containsWord, isBossCorrect, matchingSn, updatePrice} from "../common";
 import {getRequest, postRequest} from "../requestBuilder";
 import React, {useEffect, useState} from "react";
 import "./checkInventoryPage.css"
@@ -15,6 +15,7 @@ const CheckInventoryPage = (props) => {
     const [isLoading, setIsLoading] = useState(false);
     const [query, setQuery] = useState("");
     const [selectedCode, setSelectedCode] = useState("")
+    const [selectedSn, setSelectedSn] = useState("")
     const [indicatorInformation, setIndicatorInformation] = useState([]);
     const [isLoadingSelection, setIsLoadingSelection] = useState(true);
     const [sellingPrice, setSellingPrice] = useState("$")
@@ -31,14 +32,9 @@ const CheckInventoryPage = (props) => {
         if (searchQuery === "") {
             return
         }
-        const allWords = searchQuery.split("-")
+        const allWords = searchQuery.split(" ")
         const filteredItems = allInventories.filter((e) => {
-            for (const word of allWords) {
-                if (!e.code.toLowerCase().includes(word.toLowerCase())) {
-                    return false
-                }
-            }
-            return true
+            return containsWord(e, allWords) || matchingSn(e, searchQuery)
         })
         setInventoryList(filteredItems)
     }
@@ -66,6 +62,8 @@ const CheckInventoryPage = (props) => {
         const requestObj = {
             code: code
         }
+        const sn = allInventories.filter(e => e.code === code)[0].sn
+        setSelectedSn(sn)
         const allIndicatorsObject = await postRequest(apiEndpoint + '/indicator', requestObj)
         const allIndicators = allIndicatorsObject.data.allIndicators.map((x) => {
             return x.replaceAll(/\s/g, '').length === 0 ? 0 : x;
@@ -141,6 +139,7 @@ const CheckInventoryPage = (props) => {
     const selectedCodeModal = () => {
         return (
             <div className="inv-selected-code-modal">
+                <span className="inv-selected-code-sn">{selectedSn}</span>
                 <div className="inv-selected-code-heading">
                     <span className="inv-selected-item-name">{selectedCode}</span>
                     <div className="inv-remove-selection" onClick={() => unselectItem()}>

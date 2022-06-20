@@ -134,6 +134,21 @@ export const toLocString = (locObjectArray) => {
     }).join(", ")
 }
 
+export const containsWord = (e, allWords) => {
+    for (const word of allWords) {
+        if (!e.code.toLowerCase().includes(word.toLowerCase())) {
+            return false
+        }
+    }
+    return true
+}
+export const matchingSn = (e, searchQuery) => {
+    if (!searchQuery || searchQuery.includes(" ")) {
+        return false
+    }
+    return e.sn.includes(searchQuery.toUpperCase())
+}
+
 export const apiEndpoint = "https://rhq-backend.herokuapp.com/api"
 
 export const appleDetailedList = [
