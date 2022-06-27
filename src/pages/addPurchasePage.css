@@ -29,3 +29,7 @@
 .purchase-selected-item-name {
     text-align: center;
 }
+
+.purchase-item-inventory-list {
+    text-align: start;
+}

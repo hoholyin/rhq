@@ -60,6 +60,7 @@ const PendingOrdersPage = (props) => {
         const dataObject = {
             rows: selectedRows
         }
+        console.log(dataObject)
         await postRequest(apiEndpoint + '/pendingOrders', dataObject)
         setSubmitting(false)
         props.navigate("orderSubmitted")

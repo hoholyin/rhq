@@ -1,13 +1,10 @@
 .inventory-list {
-    padding: 10px;
     border-radius: 5px;
 }
 
 .inventory-list-row {
     display: flex;
     flex-direction: row;
-    margin-left: 10px;
-    margin-right: 10px;
     margin-top: 5px;
     padding: 10px;
     border-radius: 5px;
@@ -28,6 +25,7 @@
 .inventory-code {
     font-size: 10px;
     padding-right: 10px;
+    text-align: start;
 }
 
 .inventory-list-container {

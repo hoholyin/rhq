@@ -29,7 +29,8 @@ const CheckInventoryPage = (props) => {
 
     const search = (searchQuery) => {
         setQuery(searchQuery)
-        if (searchQuery === "") {
+        if (searchQuery.trim() === "") {
+            setInventoryList(allInventories)
             return
         }
         const allWords = searchQuery.split(" ")
@@ -43,6 +44,7 @@ const CheckInventoryPage = (props) => {
         setIsLoading(true)
         const inventoryListObject = await getRequest(apiEndpoint + '/inventory')
         const allInventories = inventoryListObject.data.allInventories
+        allInventories.sort((a, b) => a.sn > b.sn)
         allInventories.map((e) => {
             e.name = e.code
             e.name = e.name.replaceAll("NA", "")

@@ -2,16 +2,17 @@ import React, {useEffect, useState} from "react";
 import {getRequest, postRequest} from "../requestBuilder";
 import {
     apiEndpoint,
-    checkItemRow, codeExists,
+    checkItemRow, codeExists, containsWord,
     createCode, generateMonth, generateNextCashInOutIndexNumber,
     generateTodayDate,
     isBossCorrect,
     isInteger,
-    isPrice, toLocObjectArray, toLocString,
+    isPrice, matchingSn, toLocObjectArray, toLocString,
 } from "../common";
 import cross from "../assets/cross.png";
 import RHQLoader from "../RHQLoader";
 import InventoryList from "./InventoryList";
+import "./addPurchasePage.css"
 
 const AddPurchaseForm = (props) => {
     const [isLoading, setIsLoading] = useState(false)
@@ -68,12 +69,7 @@ const AddPurchaseForm = (props) => {
         }
         const allWords = searchQuery.split(" ")
         const filteredItems = allInventories.filter((e) => {
-            for (const word of allWords) {
-                if (!e.code.toLowerCase().includes(word.toLowerCase())) {
-                    return false
-                }
-            }
-            return true
+            return containsWord(e, allWords) || matchingSn(e, searchQuery)
         })
         setInventoryList(filteredItems)
     }
