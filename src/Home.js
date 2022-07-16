@@ -1,7 +1,18 @@
 import logo from "./assets/logo_transparent.png";
 import React from "react";
+import {createRequestOptions} from "./requestBuilder";
+import {apiEndpoint} from "./common";
 
 const Home = (props) => {
+    useEffect(() => {
+        triggerBackend();
+    })
+
+    const triggerBackend = async () => {
+        const getBossNamesRO = createRequestOptions('GET')
+        await fetch(apiEndpoint + '/bossNames', getBossNamesRO)
+    }
+
     return (
         <div className="App">
             <img src={logo} className="App-logo" alt="logo"/>
