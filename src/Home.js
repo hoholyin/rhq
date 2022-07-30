@@ -1,5 +1,5 @@
 import logo from "./assets/logo_transparent.png";
-import React from "react";
+import React, {useEffect} from "react";
 import {createRequestOptions} from "./requestBuilder";
 import {apiEndpoint} from "./common";
 

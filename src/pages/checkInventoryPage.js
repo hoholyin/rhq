@@ -34,9 +34,11 @@ const CheckInventoryPage = (props) => {
             return
         }
         const allWords = searchQuery.split(" ")
+        console.log(allInventories)
         const filteredItems = allInventories.filter((e) => {
             return containsWord(e, allWords) || matchingSn(e, searchQuery)
         })
+        console.log(filteredItems)
         setInventoryList(filteredItems)
     }
 

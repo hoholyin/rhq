@@ -3,7 +3,7 @@ import {getRequest, postRequest} from "../requestBuilder";
 import {
     apiEndpoint,
     checkItemRow, codeExists, containsWord,
-    createCode, generateMonth, generateNextCashInOutIndexNumber,
+    createCode, generateMonth, generateNextCashInOutIndexNumber, generateSerialNumber,
     generateTodayDate,
     isBossCorrect,
     isInteger,
@@ -255,7 +255,9 @@ const AddPurchaseForm = (props) => {
             const item = itemListCoded[i]
             const itemExists = await codeExists(item.code)
             if (!itemExists) {
+                const newSn = await generateSerialNumber(item.brand.toUpperCase(), item.category.toUpperCase())
                 const addItemObj = {
+                    sn: newSn,
                     category: item.category.toUpperCase(),
                     brand: item.brand.toUpperCase(),
                     model: item.model.toUpperCase(),
@@ -264,6 +266,11 @@ const AddPurchaseForm = (props) => {
                     month: generateMonth()
                 }
                 await postRequest(apiEndpoint + '/inventory', addItemObj)
+                const serialNumberObj = {
+                    sn: newSn,
+                    code: item.code
+                }
+                await postRequest(apiEndpoint + '/serialNumbers', serialNumberObj)
             }
             const data = {
                 code: item.code,

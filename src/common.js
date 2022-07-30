@@ -1,4 +1,4 @@
-import {createRequestOptions, postRequest} from "./requestBuilder";
+import {createRequestOptions, getRequest, postRequest} from "./requestBuilder";
 
 export const generateTodayDate = () => {
     const year = new Date().getFullYear().toString()
@@ -147,6 +147,15 @@ export const matchingSn = (e, searchQuery) => {
         return false
     }
     return e.sn.includes(searchQuery.toUpperCase())
+}
+
+export const generateSerialNumber = async (brand, category) => {
+    const allSerialNumbersResult = await getRequest(apiEndpoint + '/serialNumbers')
+    const allSerialNumbers = allSerialNumbersResult.data.allSn
+    const codePrefix = brand.charAt(0) + category.split(" ").map(word => word.charAt(0)).reduce((a, b) => a + b, "")
+    const existingCodesWithPrefix = allSerialNumbers.filter((x) => x.startsWith(codePrefix))
+    const nextIndex = existingCodesWithPrefix.length + 1
+    return codePrefix + nextIndex.toString()
 }
 
 export const apiEndpoint = "https://rhq-backend.herokuapp.com/api"
