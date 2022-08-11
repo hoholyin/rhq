@@ -1,8 +1,8 @@
-import logo from "../assets/logo_transparent.png";
+import logo from "../../assets/logo_transparent.png";
 import React from "react";
 import "./submitOrderPage.css"
 import SubmitOrderForm from "./submitOrderForm";
-import back from "../assets/back.png";
+import back from "../../assets/back.png";
 
 const SubmitOrderPage = (props) => {
     return (

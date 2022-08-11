@@ -16,6 +16,9 @@ const Home = (props) => {
     return (
         <div className="App">
             <img src={logo} className="App-logo" alt="logo"/>
+            <div className="button" onClick={() => props.navigate("viewPerformance")}>
+                View Performance
+            </div>
             <div className="button" onClick={() => props.navigate("checkInventory")}>
                 Check inventory
             </div>

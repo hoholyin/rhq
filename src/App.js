@@ -1,13 +1,13 @@
 import React, {useState} from "react";
 import Home from "./Home";
-import SubmitOrderPage from "./pages/submitOrderPage";
-import OrderSubmittedPage from "./pages/orderSubmittedPage";
-import CheckInventoryPage from "./pages/checkInventoryPage";
-import AddExpensesPage from "./pages/addExpensesPage";
-import AddPurchasePage from "./pages/addPurchasePage";
-import PendingOrdersPage from "./pages/pendingOrdersPage";
-import ManageOrdersPage from "./pages/managePurchasePage";
-import ManagePurchasePage from "./pages/managePurchasePage";
+import SubmitOrderPage from "./pages/submitOrder/submitOrderPage";
+import OrderSubmittedPage from "./pages/submitOrder/orderSubmittedPage";
+import CheckInventoryPage from "./pages/checkInventory/checkInventoryPage";
+import AddExpensesPage from "./pages/addExpenses/addExpensesPage";
+import AddPurchasePage from "./pages/addPurchase/addPurchasePage";
+import PendingOrdersPage from "./pages/pendingOrders/pendingOrdersPage";
+import ManagePurchasePage from "./pages/managePurchase/managePurchasePage";
+import ViewPerformancePage from "./pages/performance/viewPerformance";
 
 function App() {
     const setPage = (page) => {
@@ -45,6 +45,10 @@ function App() {
             case "orderSubmitted":
                 return (
                     <OrderSubmittedPage navigate={setCurrentPage}/>
+                )
+            case "viewPerformance":
+                return (
+                    <ViewPerformancePage navigate={setCurrentPage}/>
                 )
            default:
                return (

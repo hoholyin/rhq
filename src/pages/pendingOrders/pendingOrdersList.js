@@ -1,8 +1,11 @@
 import React from "react";
-import {toLocObjectArray, toLocString} from "../common";
+import "./pendingOrdersList.css"
+import print from "../../assets/print_icon.png";
+import {generateMailSlip} from "../../mailslip";
 
-const PendingPurchaseList = (props) => {
-    if (props.pendingPurchaseList.length === 0) {
+
+const PendingOrdersList = (props) => {
+    if (props.pendingOrdersList.length === 0) {
         return (
             <div className="pending-orders-list">
                 <div className="pending-orders-list-row">
@@ -14,7 +17,7 @@ const PendingPurchaseList = (props) => {
     const codeClassName = props.isMobile ? "pending-order-code-mobile" : "pending-order-code"
     return (
         <div className="pending-orders-list">
-            {props.pendingPurchaseList.map((e) => {
+            {props.pendingOrdersList.map((e) => {
                 const id = "checkbox-" + e.row
                 return (
                     <div className="pending-orders-list-row-container" key={e.row}>
@@ -23,12 +26,18 @@ const PendingPurchaseList = (props) => {
                                 {e.code}
                             </div>
                             <div className="pending-order-qty">
-                                {toLocString(toLocObjectArray(e.loc))}
+                                {"x" + e.qty}
+                            </div>
+                            <div className="pending-order-name">
+                                {e.name + " (" + e.boss + ")"}
                             </div>
                         </div>
                         <div className="buttons-container">
                             <div className="checkbox-container" key={id} onClick={(cb) => props.elementOnClick({row: e.row, val: cb.target.checked})}>
                                 <input type="checkbox" id={id} checked={e.selected}  className="checkbox"/>
+                            </div>
+                            <div className="print-mailslip-button" key={id} onClick={() => generateMailSlip([e])}>
+                                <img src={print} className="print-button" alt="print"/>
                             </div>
                         </div>
                     </div>
@@ -38,4 +47,4 @@ const PendingPurchaseList = (props) => {
     )
 }
 
-export default PendingPurchaseList;
+export default PendingOrdersList;

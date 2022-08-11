@@ -1,8 +1,8 @@
-import logo from "../assets/logo_transparent.png";
+import logo from "../../assets/logo_transparent.png";
 import React from "react";
 import "./addPurchasePage.css"
 import AddPurchaseForm from "./addPurchaseForm";
-import back from "../assets/back.png";
+import back from "../../assets/back.png";
 
 const AddPurchasePage = (props) => {
     return (

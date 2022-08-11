@@ -3,15 +3,15 @@ import {
     apiEndpoint, checkItemRow, containsWord,
     generateNextCashInOutIndexNumber,
     generateNextInvoiceNumber,
-    generateTodayDate, isBossCorrect, isInteger, isPrice, itemExists, matchingSn,
+    generateTodayDate, isBossCorrect, isInteger, isPrice, matchingSn,
     toLocObjectArray, toLocString, updatePrice
-} from "../common";
-import tick from "../assets/tick.png";
-import cross from "../assets/cross.png";
+} from "../../common";
+import tick from "../../assets/tick.png";
+import cross from "../../assets/cross.png";
 import React, {useEffect, useState} from "react";
 import "./submitOrderForm.css";
-import {getRequest, postRequest} from "../requestBuilder";
-import RHQLoader from "../RHQLoader";
+import {getRequest, postRequest} from "../../requestBuilder";
+import RHQLoader from "../../RHQLoader";
 
 const SubmitOrderForm = (props) => {
     const [customerName, setCustomerName] = useState("");

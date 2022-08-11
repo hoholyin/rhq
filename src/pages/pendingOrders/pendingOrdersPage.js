@@ -1,13 +1,13 @@
-import logo from "../assets/logo_transparent.png";
-import {apiEndpoint, isBossCorrect} from "../common";
-import {getRequest, postRequest} from "../requestBuilder";
+import logo from "../../assets/logo_transparent.png";
+import {apiEndpoint, isBossCorrect} from "../../common";
+import {getRequest, postRequest} from "../../requestBuilder";
 import React, {useEffect, useState} from "react";
-import RHQLoader from "../RHQLoader";
+import RHQLoader from "../../RHQLoader";
 import "./pendingOrdersPage.css"
-import back from "../assets/back.png";
-import refresh from "../assets/refresh.png";
+import back from "../../assets/back.png";
+import refresh from "../../assets/refresh.png";
 import PendingOrdersList from "./pendingOrdersList";
-import {generateMailSlip} from "../mailslip";
+import {generateMailSlip} from "../../mailslip";
 
 const PendingOrdersPage = (props) => {
     const [isLoading, setIsLoading] = useState(false)

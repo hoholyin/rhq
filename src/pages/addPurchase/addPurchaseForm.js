@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {getRequest, postRequest} from "../requestBuilder";
+import {getRequest, postRequest} from "../../requestBuilder";
 import {
     apiEndpoint,
     checkItemRow, codeExists, containsWord,
@@ -8,10 +8,10 @@ import {
     isBossCorrect,
     isInteger,
     isPrice, matchingSn, toLocObjectArray, toLocString,
-} from "../common";
-import cross from "../assets/cross.png";
-import RHQLoader from "../RHQLoader";
-import InventoryList from "./InventoryList";
+} from "../../common";
+import cross from "../../assets/cross.png";
+import RHQLoader from "../../RHQLoader";
+import InventoryList from "../checkInventory/InventoryList";
 import "./addPurchasePage.css"
 
 const AddPurchaseForm = (props) => {

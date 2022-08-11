@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from "react";
-import back from "../assets/back.png";
-import refresh from "../assets/refresh.png";
-import logo from "../assets/logo_transparent.png";
-import RHQLoader from "../RHQLoader";
-import {apiEndpoint, isBossCorrect, toLocObjectArray, toLocString} from "../common";
-import {getRequest, postRequest} from "../requestBuilder";
+import back from "../../assets/back.png";
+import refresh from "../../assets/refresh.png";
+import logo from "../../assets/logo_transparent.png";
+import RHQLoader from "../../RHQLoader";
+import {apiEndpoint, isBossCorrect, toLocObjectArray, toLocString} from "../../common";
+import {getRequest, postRequest} from "../../requestBuilder";
 import PendingPurchaseList from "./pendingPurchaseList";
 
 const ManagePurchasePage = (props) => {

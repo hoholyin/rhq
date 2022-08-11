@@ -1,6 +1,6 @@
 import React from "react";
 import "./inventoryList.css"
-import {generateInventoryListName} from "../common";
+import {generateInventoryListName} from "../../common";
 
 const InventoryList = (props) => {
     if (props.inventoryList.length === 0) {

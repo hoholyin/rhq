@@ -4,11 +4,11 @@ import {
     generateNextCashInOutIndexNumber,
     generateTodayDate, isBossCorrect,
     isPrice, updatePrice,
-} from "../common";
-import {getRequest, postRequest} from "../requestBuilder";
-import tick from "../assets/tick.png";
-import cross from "../assets/cross.png";
-import RHQLoader from "../RHQLoader";
+} from "../../common";
+import {getRequest, postRequest} from "../../requestBuilder";
+import tick from "../../assets/tick.png";
+import cross from "../../assets/cross.png";
+import RHQLoader from "../../RHQLoader";
 import "./addExpensesForm.css"
 
 const AddExpensesForm = (props) => {

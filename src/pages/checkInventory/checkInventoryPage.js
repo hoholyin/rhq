@@ -1,13 +1,13 @@
-import logo from "../assets/logo_transparent.png";
+import logo from "../../assets/logo_transparent.png";
 import InventoryList from "./InventoryList";
-import {apiEndpoint, containsWord, isBossCorrect, matchingSn, updatePrice} from "../common";
-import {getRequest, postRequest} from "../requestBuilder";
+import {apiEndpoint, containsWord, isBossCorrect, matchingSn, updatePrice} from "../../common";
+import {getRequest, postRequest} from "../../requestBuilder";
 import React, {useEffect, useState} from "react";
 import "./checkInventoryPage.css"
-import back from "../assets/back.png";
-import refresh from "../assets/refresh.png";
-import cross from "../assets/cross.png";
-import RHQLoader from "../RHQLoader";
+import back from "../../assets/back.png";
+import refresh from "../../assets/refresh.png";
+import cross from "../../assets/cross.png";
+import RHQLoader from "../../RHQLoader";
 
 const CheckInventoryPage = (props) => {
     const [inventoryList, setInventoryList] = useState([]);
