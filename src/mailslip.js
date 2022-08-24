@@ -19,7 +19,6 @@ export const generateMailSlip = (orders) => {
 }
 
 const populateMailSlip = (doc, order) => {
-    console.log(order)
     doc.addImage(logoBase64, "png", 15, 37, 30, 30)
     doc.setFont('Courier', 'bold')
     doc.setFontSize(14)
@@ -46,11 +45,8 @@ const formatAddress = (addr) => {
         if (e.toUpperCase() === "SINGAPORE") {
             return ""
         }
-        if ((e.length === 6 && !isNaN(e)) || (e.length === 7 && !isNaN(e.substring(1)))) {
-            while (e.length > 6) {
-                e = e.substring(1)
-            }
-            return "S(" + e + ")"
+        if (e.match(/\d{6}/g)) {
+            return "S(" + e.match(/\d{6}/g) + ")"
         }
         if (e.toUpperCase() === "BLK" || e.toUpperCase() === "BLOCK") {
             return "\n" + "Blk"
