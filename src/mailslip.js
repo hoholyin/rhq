@@ -46,7 +46,8 @@ const formatAddress = (addr) => {
             return ""
         }
         if (e.match(/\d{6}/g)) {
-            return "S(" + e.match(/\d{6}/g) + ")"
+            console.log(e.match(/\d{6}/g)[0])
+            return "S(" + e.match(/\d{6}/g)[0] + ")"
         }
         if (e.toUpperCase() === "BLK" || e.toUpperCase() === "BLOCK") {
             return "\n" + "Blk"
