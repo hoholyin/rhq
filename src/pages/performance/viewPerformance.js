@@ -12,6 +12,8 @@ const ViewPerformancePage = (props) => {
     const [sales, setSales] = useState(0)
     const [cog, setCog] = useState(0)
     const [profit, setProfit] = useState(0)
+    const [expense, setExpense] = useState(0)
+    const [netProfit, setNetProfit] = useState(0)
     useEffect(() => {
         refreshSalesFigure();
     }, [])
@@ -23,6 +25,8 @@ const ViewPerformancePage = (props) => {
         setSales(salesFigure[0])
         setCog(salesFigure[1])
         setProfit(salesFigure[2])
+        setExpense(salesFigure[3])
+        setNetProfit(salesFigure[4])
         setIsLoading(false)
     }
 
@@ -46,8 +50,16 @@ const ViewPerformancePage = (props) => {
                    <span className="sales-figure-row-figure">${cog}</span>
                </div>
                <div className="sales-figure-row">
-                   <span className="sales-figure-row-title">Net Profit</span>
+                   <span className="sales-figure-row-title">Gross Profit</span>
                    <span className="sales-figure-row-figure">${profit}</span>
+               </div>
+               <div className="sales-figure-row">
+                   <span className="sales-figure-row-title">Total expense</span>
+                   <span className="sales-figure-row-figure">${expense}</span>
+               </div>
+               <div className="sales-figure-row">
+                   <span className="sales-figure-row-title">Net Profit/loss</span>
+                   <span className="sales-figure-row-figure">${netProfit}</span>
                </div>
            </div>
        )

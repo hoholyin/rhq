@@ -24,7 +24,7 @@
 }
 
 .sales-figure-row-title {
-    font-size: 15px;
+    font-size: 2vmin;
 }
 
 .sales-figure-row {
@@ -36,5 +36,5 @@
 }
 
 .sales-figure-row-figure {
-    font-size: 18px;
+    font-size: 2vmin;
 }
