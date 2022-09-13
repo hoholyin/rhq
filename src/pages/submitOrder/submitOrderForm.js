@@ -130,7 +130,7 @@ const SubmitOrderForm = (props) => {
     }
 
     const verifyAndSetCustomerName = (name) => {
-        if (blacklist.includes(name)) {
+        if (blacklist.map(n => n.toUpperCase()).includes(name.toUpperCase())) {
             // Is in blacklist
             setIsInBlacklist(true)
         } else {

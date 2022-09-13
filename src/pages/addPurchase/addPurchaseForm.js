@@ -303,7 +303,23 @@ const AddPurchaseForm = (props) => {
             const itemRow = await checkItemRow(item.code)
             const currLocationRes = await postRequest(apiEndpoint + '/inventoryGetLoc', {row: itemRow})
             const currLocation = toLocObjectArray(currLocationRes.data.inventoryLoc)
-            let newLocations = [... currLocation, {name: "DE", qty: item.qty}]
+            let newLocations;
+            if (currLocation.filter(loc => loc.name === "DE").length === 1) {
+                // Adding to item that has pending delivery
+                newLocations = currLocation.map(loc => {
+                    if (loc.name === "DE") {
+                        const newQty = parseInt(loc.qty) + parseInt(item.qty)
+                        return {
+                            name: "DE",
+                            qty: newQty
+                        }
+                    }
+                    return loc
+                })
+            } else {
+                // Item has no pending delivery
+                newLocations = [... currLocation, {name: "DE", qty: item.qty}]
+            }
             const updatedNewLocationsString = toLocString(newLocations)
             await postRequest(apiEndpoint + '/inventoryUpdateLoc', {row: itemRow, location: updatedNewLocationsString})
         }
