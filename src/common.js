@@ -158,7 +158,7 @@ export const generateSerialNumber = async (brand, category) => {
     return codePrefix + nextIndex.toString()
 }
 
-export const apiEndpoint = "https://rhq-backend.herokuapp.com/api"
+export const apiEndpoint = "https://rhq-backend.fly.dev/api"
 
 export const appleDetailedList = [
     "Airpods 1/2",

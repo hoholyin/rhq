@@ -21,9 +21,17 @@
 }
 
 .purchase-selected-code-modal {
+    background-color: #16181c;
+    margin-bottom: 5px;
+    border-radius: 5px;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 5px 10px;
+    border-width: 2px;
+    border-style: solid;
+    border-color: #16181c;
 }
 
 .purchase-selected-item-name {
