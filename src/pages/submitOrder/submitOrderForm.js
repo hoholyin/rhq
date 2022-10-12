@@ -3,7 +3,7 @@ import {
     apiEndpoint, checkItemRow, containsWord,
     generateNextCashInOutIndexNumber,
     generateNextInvoiceNumber,
-    generateTodayDate, isBossCorrect, isInteger, isPrice, matchingSn,
+    generateTodayDate, isBossCorrect, isInteger, isPrice, matchingSn, subtractPrice,
     toLocObjectArray, toLocString, updatePrice
 } from "../../common";
 import tick from "../../assets/tick.png";
@@ -130,12 +130,8 @@ const SubmitOrderForm = (props) => {
     }
 
     const verifyAndSetCustomerName = (name) => {
-        if (blacklist.map(n => n.toUpperCase()).includes(name.toUpperCase())) {
-            // Is in blacklist
-            setIsInBlacklist(true)
-        } else {
-            setIsInBlacklist(false)
-        }
+        const inBlacklist = blacklist.map(n => n.toUpperCase()).includes(name.toUpperCase())
+        setIsInBlacklist(inBlacklist);
         setCustomerName(name)
     }
 
@@ -221,23 +217,27 @@ const SubmitOrderForm = (props) => {
             setUpdatingInventoryCheckCorrect(1)
 
             const today = generateTodayDate()
-            let firstInvoiceNumber;
+            console.log(items);
+            const originalAmt = items.map(item => item.obj.price).reduce((a, b) => addPrice(a, b), "$0.00")
+            const discount = subtractPrice(originalAmt, amount);
+            const getOrdersInfo = await getRequest(apiEndpoint + "/orders")
+            const lastInvoiceNumber = getOrdersInfo.data.lastInvoiceNumber
+            const firstInvoiceNumber = generateNextInvoiceNumber(lastInvoiceNumber)
+            let nextSalesRow = parseInt(getOrdersInfo.data.lastSalesRow) + 1;
+            console.log(nextSalesRow)
             for (let i = 0; i < items.length; i++) {
                 const item = items[i]
-                const getOrdersInfo = await getRequest(apiEndpoint + "/orders")
-                const lastInvoiceNumber = getOrdersInfo.data.lastInvoiceNumber
-                const nextSalesRow = (parseInt(getOrdersInfo.data.lastSalesRow) + 1).toString()
-                const netSalesFormula = "=M{}-R{}".replace(/{}/g, nextSalesRow)
-                const cogNetFormula = "=T{}*L{}".replace(/{}/g, nextSalesRow)
+                const netSalesFormula = "=M{}-R{}".replace(/{}/g, nextSalesRow.toString())
+                const cogNetFormula = "=T{}*L{}".replace(/{}/g, nextSalesRow.toString())
+                nextSalesRow = nextSalesRow + 1;
                 const currInvoiceNumber = generateNextInvoiceNumber(lastInvoiceNumber)
-                firstInvoiceNumber = !firstInvoiceNumber ? currInvoiceNumber : firstInvoiceNumber
                 const order = {
                     code: item.obj.code,
                     customer: customerName,
                     invoice_number: currInvoiceNumber,
                     invoice_date: today,
                     qty: item.qty,
-                    amt: i === 0 ? amount : "$0.00",
+                    amt: i === 0 ? subtractPrice(item.obj.price, discount) : item.obj.price,
                     tips: tips,
                     stamps: stamps,
                     remarks: remarks,
