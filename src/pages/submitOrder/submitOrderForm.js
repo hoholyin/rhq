@@ -217,14 +217,12 @@ const SubmitOrderForm = (props) => {
             setUpdatingInventoryCheckCorrect(1)
 
             const today = generateTodayDate()
-            console.log(items);
             const originalAmt = items.map(item => item.obj.price).reduce((a, b) => addPrice(a, b), "$0.00")
             const discount = subtractPrice(originalAmt, amount);
             const getOrdersInfo = await getRequest(apiEndpoint + "/orders")
             const lastInvoiceNumber = getOrdersInfo.data.lastInvoiceNumber
             const firstInvoiceNumber = generateNextInvoiceNumber(lastInvoiceNumber)
             let nextSalesRow = parseInt(getOrdersInfo.data.lastSalesRow) + 1;
-            console.log(nextSalesRow)
             for (let i = 0; i < items.length; i++) {
                 const item = items[i]
                 const netSalesFormula = "=M{}-R{}".replace(/{}/g, nextSalesRow.toString())
