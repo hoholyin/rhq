@@ -6,6 +6,7 @@ import React, {useEffect, useState} from "react";
 import {getRequest} from "../../requestBuilder";
 import {apiEndpoint} from "../../common";
 import "./viewPerformance.css";
+import PerformanceGraph from "./performanceGraph";
 
 const ViewPerformancePage = (props) => {
     const [isLoading, setIsLoading] = useState(false)
@@ -79,6 +80,7 @@ const ViewPerformancePage = (props) => {
                 <img src={logo} className="submit-order-app-logo" alt="logo"/>
             </div>
             {isLoading ? <RHQLoader message={"Getting sales figures"} /> : salesFigureModal()}
+            {PerformanceGraph()}
         </div>
     )
 }
