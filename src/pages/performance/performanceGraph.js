@@ -1,19 +1,30 @@
 import React, {useEffect, useState} from "react";
-import {CategoryScale} from 'chart.js';
 import {Bar} from "react-chartjs-2";
 import Chart from 'chart.js/auto';
+import {getRequest} from "../../requestBuilder";
+import {apiEndpoint} from "../../common";
 
 const PerformanceGraph = (props) => {
+    const [labels, setLabels] = useState([]);
+    const [profits, setProfits] = useState([]);
+    useEffect(() => {
+       loadProfits();
+    }, [])
+
+    const loadProfits = async () => {
+        const profitObjs = await getRequest(apiEndpoint + '/performance');
+        setLabels(profitObjs.data.performance.map(obj => obj.month));
+        setProfits(profitObjs.data.performance.map(obj => parseFloat(obj.profit.substring(1))));
+    }
+
     const state = {
-        labels: ['January', 'February', 'March',
-            'April', 'May'],
+        labels: labels,
         datasets: [
             {
                 label: 'Profit',
                 backgroundColor: 'rgba(75,192,192,1)',
-                borderColor: 'rgba(0,0,0,1)',
-                borderWidth: 2,
-                data: [65, 59, 80, 81, 56]
+                data: profits,
+                maxBarThickness: 20
             }
         ]
     }
@@ -30,7 +41,8 @@ const PerformanceGraph = (props) => {
                     },
                     legend:{
                         display:true,
-                        position:'right'
+                        position:'right',
+                        color: '#ffffff'
                     }
                 }}
             />

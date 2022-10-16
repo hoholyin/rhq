@@ -66,7 +66,7 @@ const SubmitOrderForm = (props) => {
 
     useEffect(() => {
         setUpOrderForm()
-    }, [])
+    })
 
     const setUpOrderForm = async () => {
         setIsLoading(true)
