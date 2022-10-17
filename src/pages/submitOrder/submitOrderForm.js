@@ -66,7 +66,7 @@ const SubmitOrderForm = (props) => {
 
     useEffect(() => {
         setUpOrderForm()
-    })
+    }, [])
 
     const setUpOrderForm = async () => {
         setIsLoading(true)
@@ -130,8 +130,12 @@ const SubmitOrderForm = (props) => {
     }
 
     const verifyAndSetCustomerName = (name) => {
-        const inBlacklist = blacklist.map(n => n.toUpperCase()).includes(name.toUpperCase())
-        setIsInBlacklist(inBlacklist);
+        if (blacklist.map(n => n.toUpperCase()).includes(name.toUpperCase())) {
+            // Is in blacklist
+            setIsInBlacklist(true)
+        } else {
+            setIsInBlacklist(false)
+        }
         setCustomerName(name)
     }
 
