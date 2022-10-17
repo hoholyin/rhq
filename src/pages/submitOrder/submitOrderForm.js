@@ -226,12 +226,13 @@ const SubmitOrderForm = (props) => {
             const getOrdersInfo = await getRequest(apiEndpoint + "/orders")
             const lastInvoiceNumber = getOrdersInfo.data.lastInvoiceNumber
             const firstInvoiceNumber = generateNextInvoiceNumber(lastInvoiceNumber)
-            let nextSalesRow = parseInt(getOrdersInfo.data.lastSalesRow) + 1;
+            let nextSalesRow = parseInt(getOrdersInfo.data.lastSalesRow);
+            const allOrders = [];
             for (let i = 0; i < items.length; i++) {
                 const item = items[i]
+                nextSalesRow += 1;
                 const netSalesFormula = "=M{}-R{}".replace(/{}/g, nextSalesRow.toString())
                 const cogNetFormula = "=T{}*L{}".replace(/{}/g, nextSalesRow.toString())
-                nextSalesRow = nextSalesRow + 1;
                 const currInvoiceNumber = generateNextInvoiceNumber(lastInvoiceNumber)
                 const order = {
                     code: item.obj.code,
@@ -249,8 +250,9 @@ const SubmitOrderForm = (props) => {
                     netSalesFormula: netSalesFormula,
                     cogNetFormula: cogNetFormula
                 }
-                await postRequest(apiEndpoint + '/order', order)
+                allOrders.push(order);
             }
+            await postRequest(apiEndpoint + '/order', allOrders)
             if (tips !== "$0.00") {
                 const tipsObject = {
                     customer: customerName,
