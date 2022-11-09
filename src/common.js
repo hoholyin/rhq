@@ -92,21 +92,30 @@ export const subtractPrice = (p1, p2) => {
 
 export const addPrice = (p1, p2) => {
     if (!isPrice(p1) || !isPrice(p2)) {
-        return "$0.00"
+        return "$0.00";
     }
-    const p1Float = parseFloat(p1.substring(1))
-    const p2Float = parseFloat(p2.substring(1))
-    let totalFloat = (p1Float + p2Float).toString()
+    const p1Float = parseFloat(p1.substring(1));
+    const p2Float = parseFloat(p2.substring(1));
+    let totalFloat = (p1Float + p2Float).toString();
     if (!totalFloat.includes(".")) {
-        totalFloat += ".00"
+        totalFloat += ".00";
     }
     while (totalFloat.split(".")[1].length > 2) {
-        totalFloat = totalFloat.slice(0, -1)
+        totalFloat = totalFloat.slice(0, -1);
     }
     while (totalFloat.split(".")[1].length < 2) {
-        totalFloat += "0"
+        totalFloat += "0";
     }
-    return "$" + totalFloat
+    return "$" + totalFloat;
+}
+
+export const multiplyPrice = (p1, q) => {
+    // q is integer
+    let result = "$0.00";
+    for (let i = 0; i < q; i++) {
+        result = addPrice(result, p1);
+    }
+    return result;
 }
 
 export const toLocObjectArray = (locString) => {

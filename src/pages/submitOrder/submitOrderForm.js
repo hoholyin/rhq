@@ -3,7 +3,7 @@ import {
     apiEndpoint, checkItemRow, containsWord,
     generateNextCashInOutIndexNumber,
     generateNextInvoiceNumber,
-    generateTodayDate, isBossCorrect, isInteger, isPrice, matchingSn, subtractPrice,
+    generateTodayDate, isBossCorrect, isInteger, isPrice, matchingSn, multiplyPrice, subtractPrice,
     toLocObjectArray, toLocString, updatePrice
 } from "../../common";
 import tick from "../../assets/tick.png";
@@ -216,12 +216,14 @@ const SubmitOrderForm = (props) => {
                     return e
                 }).filter((e) => e.qty > 0)
                 const updatedCurrLocationString = toLocString(updatedCurrLocation)
-                await postRequest(apiEndpoint + '/inventoryUpdateLoc', {row: itemRow, location: updatedCurrLocationString})
+                // await postRequest(apiEndpoint + '/inventoryUpdateLoc', {row: itemRow, location: updatedCurrLocationString})
             }
             setUpdatingInventoryCheckCorrect(1)
 
             const today = generateTodayDate()
-            const originalAmt = items.map(item => item.obj.price).reduce((a, b) => addPrice(a, b), "$0.00")
+            const originalAmt = items
+                .map(item => multiplyPrice(item.obj.price, item.qty))
+                .reduce((a, b) => addPrice(a, b), "$0.00")
             const discount = subtractPrice(originalAmt, amount);
             const getOrdersInfo = await getRequest(apiEndpoint + "/orders")
             const lastInvoiceNumber = getOrdersInfo.data.lastInvoiceNumber
