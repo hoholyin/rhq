@@ -216,7 +216,7 @@ const SubmitOrderForm = (props) => {
                     return e
                 }).filter((e) => e.qty > 0)
                 const updatedCurrLocationString = toLocString(updatedCurrLocation)
-                // await postRequest(apiEndpoint + '/inventoryUpdateLoc', {row: itemRow, location: updatedCurrLocationString})
+                await postRequest(apiEndpoint + '/inventoryUpdateLoc', {row: itemRow, location: updatedCurrLocationString})
             }
             setUpdatingInventoryCheckCorrect(1)
 
@@ -236,13 +236,15 @@ const SubmitOrderForm = (props) => {
                 const netSalesFormula = "=M{}-R{}".replace(/{}/g, nextSalesRow.toString())
                 const cogNetFormula = "=T{}*L{}".replace(/{}/g, nextSalesRow.toString())
                 const currInvoiceNumber = generateNextInvoiceNumber(lastInvoiceNumber)
+                let amt = multiplyPrice(item.obj.price, item.qty)
+                amt = i === 0 ? subtractPrice(amt, discount) : amt;
                 const order = {
                     code: item.obj.code,
                     customer: customerName,
                     invoice_number: currInvoiceNumber,
                     invoice_date: today,
                     qty: item.qty,
-                    amt: i === 0 ? subtractPrice(item.obj.price, discount) : item.obj.price,
+                    amt: amt,
                     tips: tips,
                     stamps: stamps,
                     remarks: remarks,
