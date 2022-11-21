@@ -72,10 +72,11 @@ const SubmitOrderForm = (props) => {
         setIsLoading(true)
         const inventoryListObject = await getRequest(apiEndpoint + '/inventory')
         const allInventories = inventoryListObject.data.allInventories
-        allInventories.map((e) => {
-            e.name = e.code
-            return e
-        })
+            .filter(e => e.qty > 0)
+            .map(e => {
+                e.name = e.code
+                return e
+            })
         setAllInventories(allInventories)
         setInventoryList(allInventories)
         const allNames = await getBlacklist()
