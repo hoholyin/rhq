@@ -1,12 +1,17 @@
 
 .inventory-list-container {
-    padding-top: 10px;
-    padding-bottom: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
 }
 
-.input-box {
-    width: 30vmin;
+.input-box-main {
     font-family: Lato;
+}
+
+.input-box::placeholder {
+    font-family: Lato;
+    font-size: 14px;
 }
 
 .back-button-container {
@@ -43,6 +48,14 @@
     width: 100%;
     justify-content: space-between;
     padding-bottom: 5px;
+}
+
+.inv-selected-code-sn-and-btn-container {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: space-between;
+    margin-bottom: 5px;
 }
 
 .inv-selected-code-modal {
@@ -105,7 +118,7 @@
 }
 
 .inv-selected-item-name {
-    font-size: 16px;
+    font-size: 12px;
     color: #05c37b;
 }
 
@@ -131,7 +144,7 @@
 }
 
 .indicator-header {
-    font-size: 14px;
+    font-size: 9px;
     padding-bottom: 5px;
 }
 
@@ -139,6 +152,8 @@
     display: flex;
     flex-direction: row;
     margin-bottom: 15px;
+    width: 100%;
+    justify-content: space-between;
 }
 
 .indicator-value {

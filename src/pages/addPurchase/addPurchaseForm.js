@@ -369,9 +369,13 @@ const AddPurchaseForm = (props) => {
     return ( isLoading ? <RHQLoader message={"Creating form..."}/> : (
             <div className="form">
                 <span className="form-header">Purchase Form</span>
-                <span className="form-label">Supplier</span>
+                <div className="form-label-container">
+                    <span className="form-label">Supplier</span>
+                </div>
                 <input className="input-box" type="text" onChange={e => setSupplier(e.target.value)}/>
-                <span className="form-label">Invoice no</span>
+                <div className="form-label-container">
+                    <span className="form-label">Invoice no</span>
+                </div>
                 <input className="input-box" type="text" onChange={e => setInvoiceNumber(e.target.value)}/>
                 {itemList.map((e) => {
                     return itemPropertiesComponent(e.index)
@@ -382,7 +386,9 @@ const AddPurchaseForm = (props) => {
                 <div className="search-item-row" onClick={() => addItem(false)}>
                     <span className="button-item-name">+ Add existing product</span>
                 </div>
-                <span className="form-label">Boss in-charge</span>
+                <div className="form-label-container">
+                    <span className="form-label">Boss in-charge</span>
+                </div>
                 <input className="input-box" type="text" onChange={e => setBossName(e.target.value)}/>
                 {isWarningMessageVisible && warningMessageComponent(warningMessage)}
                 {canSubmit()

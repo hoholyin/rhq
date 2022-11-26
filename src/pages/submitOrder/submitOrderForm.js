@@ -1,6 +1,6 @@
 import {
     addPrice,
-    apiEndpoint, checkItemRow, containsWord,
+    apiEndpoint, checkItemRow, containsWord, generateInventoryListName,
     generateNextCashInOutIndexNumber,
     generateNextInvoiceNumber,
     generateTodayDate, isBossCorrect, isInteger, isPrice, matchingSn, multiplyPrice, subtractPrice,
@@ -346,13 +346,13 @@ const SubmitOrderForm = (props) => {
 
     const inactiveButton = () => {
        return (
-           <div className="form-button-inactive">Submit Order</div>
+           <div className="form-button inactive">SUBMIT</div>
        )
     }
 
     const activeButton = () => {
         return (
-            <div className="form-button" onClick={submitOrder}>Submit Order</div>
+            <div className="form-button active" onClick={submitOrder}>SUBMIT</div>
         )
     }
 
@@ -423,35 +423,53 @@ const SubmitOrderForm = (props) => {
     return ( isLoading ? <RHQLoader message={"Creating form..."}/> : (
         <div className="form">
             <span className="form-header">Order Form</span>
-            <span className="form-label">Customer's name</span>
+            <div className="form-label-container">
+                <span className="form-label">CUSTOMER'S NAME</span>
+            </div>
             <input className="input-box" type="text" onChange={e => verifyAndSetCustomerName(e.target.value)}/>
             {isInBlacklist && <span className="warning-message">Customer in blacklist!</span>}
-            <span className="form-label">Mailing Address</span>
-            <input className="input-box" type="text" onChange={e => setAddress(e.target.value)}/>
-            <span className="form-label">Search Item</span>
+            <div className="form-label-container">
+                <span className="form-label">MAILING ADDRESS</span>
+            </div>
+            <textarea className="input-area" rows="5" type="text" onChange={e => setAddress(e.target.value)}/>
+            <div className="form-label-container">
+                <span className="form-label">SEARCH ITEM</span>
+            </div>
             <input className="input-box" placeholder="Start typing to search..." type="text" value={searchQuery} onChange={e => search(e.target.value)}/>
             {searchQuery !== "" && inventoryList.map((e) => {
                 return (
                     <div className="search-item-row" onClick={() => selectItem(e)}>
                         <div className="search-item-row-container">
                             <span className="search-item-sn">{e.sn}</span>
-                            <span className="search-item-name">{e.name}</span>
+                            <span className="search-item-name">{generateInventoryListName(e.name)}</span>
                         </div>
                     </div>
                 )
             })}
-            <span className="form-label">Selected Items</span>
+            <div className="form-label-container">
+                <span className="form-label">SELECTED ITEMS</span>
+            </div>
             {items.length > 0 && selectedCodeModal()}
             {items.length === 0 && noItemsModal()}
-            <span className="form-label">Net Amount (After discount)</span>
+            <div className="form-label-container">
+                <span className="form-label">NET AMOUNT (AFTER DISCOUNT)</span>
+            </div>
             <input className="input-box" type="text" value={amount} onChange={e => updatePrice(e.target.value, setAmount)}/>
-            <span className="form-label">Stamp value</span>
+            <div className="form-label-container">
+                <span className="form-label">STAMP VALUE</span>
+            </div>
             <input className="input-box" type="text" value={stamps} onChange={e => updatePrice(e.target.value, setStamps)}/>
-            <span className="form-label">Remarks</span>
+            <div className="form-label-container">
+                <span className="form-label">REMARKS</span>
+            </div>
             <input className="input-box" type="text" value={remarks} onChange={e => setRemarks(e.target.value)}/>
-            <span className="form-label">Tips</span>
+            <div className="form-label-container">
+                <span className="form-label">TIPS</span>
+            </div>
             <input className="input-box" type="text" value={tips} onChange={e => updatePrice(e.target.value, setTips)}/>
-            <span className="form-label">Boss in-charge of Sale</span>
+            <div className="form-label-container">
+                <span className="form-label">BOSS-IN-CHARGE</span>
+            </div>
             <input className="input-box" type="text" onChange={e => setBossName(e.target.value)}/>
             {isWarningMessageVisible && warningMessageComponent(warningMessage)}
             {isStatusMessagesVisible && statusMessageComponent()}

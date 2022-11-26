@@ -1,6 +1,13 @@
 import logo from "../../assets/logo_transparent.png";
 import InventoryList from "./InventoryList";
-import {apiEndpoint, containsWord, isBossCorrect, matchingSn, updatePrice} from "../../common";
+import {
+    apiEndpoint,
+    containsWord,
+    generateInventoryListName,
+    isBossCorrect,
+    matchingSn,
+    updatePrice
+} from "../../common";
 import {getRequest, postRequest} from "../../requestBuilder";
 import React, {useEffect, useState} from "react";
 import "./checkInventoryPage.css"
@@ -74,19 +81,19 @@ const CheckInventoryPage = (props) => {
         })
         const allIndicatorObjects = [
             {
-                name: 'Units Sold',
+                name: 'UNITS SOLD',
                 val: allIndicators[0]
             },
             {
-                name: 'Stock in Qty Units',
+                name: 'STOCK',
                 val: allIndicators[1]
             },
             {
-                name: 'Restock Count',
+                name: 'RESTOCK COUNT',
                 val: allIndicators[2]
             },
             {
-                name: 'Margin',
+                name: 'MARGIN',
                 val: allIndicators[3]
             }
         ];
@@ -143,12 +150,14 @@ const CheckInventoryPage = (props) => {
     const selectedCodeModal = () => {
         return (
             <div className="inv-selected-code-modal">
-                <span className="inv-selected-code-sn">{selectedSn}</span>
-                <div className="inv-selected-code-heading">
-                    <span className="inv-selected-item-name">{selectedCode}</span>
+                <div className="inv-selected-code-sn-and-btn-container">
+                    <span className="inv-selected-code-sn">{selectedSn}</span>
                     <div className="inv-remove-selection" onClick={() => unselectItem()}>
                         <img src={cross} className="remove-selection-icon" alt="logo"/>
                     </div>
+                </div>
+                <div className="inv-selected-code-heading">
+                    <span className="inv-selected-item-name">{generateInventoryListName(selectedCode)}</span>
                 </div>
                 <div className="indicator-container">
                     {indicatorInformation.map((obj) => {
@@ -182,7 +191,7 @@ const CheckInventoryPage = (props) => {
             <div className="logo-container interactive" onClick={() => props.navigate("")}>
                 <img src={logo} className="submit-order-app-logo" alt="logo"/>
             </div>
-            {!isLoading && <input className="input-box" type="text" onChange={e => search(e.target.value)}/>}
+            {!isLoading && <input className="input-box-main" type="text" onChange={e => search(e.target.value)}/>}
             {selectedCode !== ""
                 ? isLoadingSelection ? <RHQLoader message={"Can wait abit anot..."}/> : selectedCodeModal()
                 : null }

@@ -18,6 +18,8 @@ html, body {
   font-size: calc(10px + 2vmin);
   color: azure;
   background-size: auto 100%;
+  padding-left: 10px;
+  padding-right: 10px;
 }
 
 .App-logo {
@@ -39,7 +41,7 @@ html, body {
   padding: 5px 20px 5px 20px;
   font-family: Lato;
   margin-bottom: 20px;
-  width: 30vmin;
+  width: 100%;
 }
 
 .button:hover {
@@ -48,4 +50,12 @@ html, body {
 
 .links {
   text-decoration: none;
+}
+
+.button-container {
+  width: 80%;
+  max-width: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }

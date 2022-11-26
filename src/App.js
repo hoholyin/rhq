@@ -65,7 +65,7 @@ function App() {
     const [currentPage, setCurrentPage] = useState(getPage());
 
     return (
-    <div className="App">
+    <div>
         {setPage(currentPage)}
     </div>
   );

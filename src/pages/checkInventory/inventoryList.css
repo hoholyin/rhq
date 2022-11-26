@@ -28,10 +28,15 @@
     text-align: start;
 }
 
-.inventory-list-container {
-    display: flex;
+.inventory-list-row-container {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    width: 100%;
+    max-width: 300px;
     flex-direction: column;
+    text-align: start;
     align-items: flex-start;
+    justify-content: flex-start;
 }
 
 .inventory-sn {
