@@ -29,4 +29,5 @@
     font-size: calc(10px + 2vmin);
     color: azure;
     background-size: auto 100%;
+    max-width: 300px;
 }

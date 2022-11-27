@@ -170,7 +170,9 @@ const CheckInventoryPage = (props) => {
                     })}
                 </div>
                 <div className="selling-price-container">
-                    <span className="selling-price-header">SELLING PRICE</span>
+                    <div className="form-label-container">
+                        <span className="selling-price-header">SELLING PRICE</span>
+                    </div>
                     <input className="input-box" type="text" value={sellingPrice} onChange={e => updatePrice(e.target.value, setSellingPrice)}/>
                     {sellingPrice !== oldSellingPrice && confirmationContainer()}
                 </div>

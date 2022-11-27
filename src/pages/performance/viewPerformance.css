@@ -7,12 +7,16 @@
     border-radius: 5px;
     display: flex;
     flex-direction: column;
-    width: 30vmin;
+    width: 90%;
+    max-width: 300px;
+    margin-left: 10px;
+    margin-right: 10px;
 }
 
 .sales-figure-header {
     color: #04AA6D;
-    font-size: 20px;
+    font-size: 15px;
+    font-weight: bold;
 }
 
 .sales-figure-line {
@@ -23,18 +27,11 @@
     margin-bottom: 15px;
 }
 
-.sales-figure-row-title {
-    font-size: 2vmin;
-}
-
 .sales-figure-row {
+    font-size: 15px;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
     padding-bottom: 10px;
-}
-
-.sales-figure-row-figure {
-    font-size: 2vmin;
 }

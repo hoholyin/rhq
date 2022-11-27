@@ -120,7 +120,7 @@ const PendingOrdersPage = (props) => {
             {isLoading
                 ? <RHQLoader message={"Fetching pending orders..."}/>
                 : <div className="pending-orders">
-                    <div className="form-button" onClick={selectAllCheckbox}>Select All Orders</div>
+                    <div className="form-button select-all-orders" onClick={selectAllCheckbox}>Select All Orders</div>
                     {shouldShowPrintButton() && <div className="form-button" onClick={printSelection}>Print Selected Orders</div>}
                     <div className="pending-orders-list-container">
                         <PendingOrdersList pendingOrdersList={ordersList} isMobile={isMobile}

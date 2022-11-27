@@ -34,7 +34,7 @@ const ViewPerformancePage = (props) => {
     const getMonth = () => {
         const d = new Date();
         const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-        return months[d.getMonth()].substring(0, 3).toUpperCase() + " " + d.getFullYear()
+        return months[d.getMonth()].toUpperCase() + " " + d.getFullYear()
     }
 
     const salesFigureModal = () => {

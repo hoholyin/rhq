@@ -182,25 +182,41 @@ const AddExpensesForm = (props) => {
     return (
         <div className="form">
             <span className="form-header">Expense Form</span>
-            <span className="form-label">Category</span>
-            <select name="category" id="categories" onChange={e => setCategory(e.target.value)}>
-                {categoryList.map((item) => {
-                    return (
-                        <option value={item}>{item}</option>
-                    )
-                })}
-            </select>
-            <span className="form-label">Paid To</span>
+            <div className="form-label-container">
+                <span className="form-label">CATEGORY</span>
+            </div>
+            <div className="form-label-container">
+                <select name="category" id="categories" onChange={e => setCategory(e.target.value)}>
+                    {categoryList.map((item) => {
+                        return (
+                            <option value={item}>{item}</option>
+                        )
+                    })}
+                </select>
+            </div>
+            <div className="form-label-container">
+                <span className="form-label">PAID TO</span>
+            </div>
             <input className="input-box" type="text" onChange={e => setPaidTo(e.target.value)}/>
-            <span className="form-label">Invoice no (If applicable)</span>
+            <div className="form-label-container">
+                <span className="form-label">INVOICE NO (If applicable)</span>
+            </div>
             <input className="input-box" type="text" value={invoiceNumber} onChange={e => setInvoiceNumber(e.target.value)}/>
-            <span className="form-label">Date</span>
+            <div className="form-label-container">
+                <span className="form-label">DATE</span>
+            </div>
             <input className="input-box" type="text" value={date} onChange={e => updateDate(e.target.value)}/>
-            <span className="form-label">Description</span>
+            <div className="form-label-container">
+                <span className="form-label">DESCRIPTION</span>
+            </div>
             <input className="input-box" type="text" onChange={e => setDesc(e.target.value)}/>
-            <span className="form-label">Amount</span>
+            <div className="form-label-container">
+                <span className="form-label">AMOUNT</span>
+            </div>
             <input className="input-box" type="text" value={amount} onChange={e => updatePrice(e.target.value, setAmount)}/>
-            <span className="form-label">Boss in-charge</span>
+            <div className="form-label-container">
+                <span className="form-label">BOSS-IN-CHARGE </span>
+            </div>
             <input className="input-box" type="text" onChange={e => setBossName(e.target.value)}/>
             {isWarningMessageVisible && warningMessageComponent(warningMessage)}
             {isStatusMessagesVisible && statusMessageComponent()}
