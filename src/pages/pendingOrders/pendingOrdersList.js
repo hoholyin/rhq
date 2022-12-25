@@ -15,6 +15,9 @@ const PendingOrdersList = (props) => {
         )
     }
     const codeClassName = props.isMobile ? "pending-order-code-mobile" : "pending-order-code"
+    const getQtyClassName = (qty) => {
+        return parseInt(qty) === 1 ? "pending-order-qty" : "pending-order-qty alert-qty"
+    }
     return (
         <div className="pending-orders-list">
             {props.pendingOrdersList.map((e) => {
@@ -25,7 +28,7 @@ const PendingOrdersList = (props) => {
                             <div className={codeClassName}>
                                 {e.code}
                             </div>
-                            <div className="pending-order-qty">
+                            <div className={getQtyClassName(e.qty)}>
                                 {"x" + e.qty}
                             </div>
                             <div className="pending-order-name">

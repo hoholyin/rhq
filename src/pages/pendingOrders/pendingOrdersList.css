@@ -50,6 +50,10 @@
     padding-bottom: 5px;
 }
 
+.alert-qty {
+    color: #F2313C;
+}
+
 .pending-orders-list-row {
     display: flex;
     flex-direction: column;
