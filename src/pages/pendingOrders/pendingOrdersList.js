@@ -31,6 +31,9 @@ const PendingOrdersList = (props) => {
                             <div className="pending-order-name">
                                 {e.name + " (" + e.boss + ")"}
                             </div>
+                            <div className="pending-order-remaining-qty">
+                                {"REMAINING STOCKS: " + e.remainingQty}
+                            </div>
                         </div>
                         <div className="buttons-container">
                             <div className="checkbox-container" key={id} onClick={(cb) => props.elementOnClick({row: e.row, val: cb.target.checked})}>

@@ -83,6 +83,15 @@
     justify-content: flex-start;
 }
 
+.pending-order-remaining-qty {
+    font-size: 12px;
+    font-weight: bold;
+    padding-right: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+}
+
 .pending-orders-list-row:hover {
     cursor: pointer;
     border-color: #04aa6d;
