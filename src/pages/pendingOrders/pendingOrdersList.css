@@ -51,7 +51,13 @@
 }
 
 .alert-qty {
-    color: #F2313C;
+    animation: alert-animation 2s infinite;
+}
+
+@keyframes alert-animation {
+    0% { color: azure}
+    50% { color: #F2313C }
+    100% { color: azure}
 }
 
 .pending-orders-list-row {

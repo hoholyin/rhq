@@ -2,6 +2,7 @@ import React from "react";
 import "./pendingOrdersList.css"
 import print from "../../assets/print_icon.png";
 import {generateMailSlip} from "../../mailslip";
+import {toLocObjectArray} from "../../common";
 
 
 const PendingOrdersList = (props) => {
@@ -17,6 +18,11 @@ const PendingOrdersList = (props) => {
     const codeClassName = props.isMobile ? "pending-order-code-mobile" : "pending-order-code"
     const getQtyClassName = (qty) => {
         return parseInt(qty) === 1 ? "pending-order-qty" : "pending-order-qty alert-qty"
+    }
+
+    const getRemainingQtyClassName = (loc) => {
+        const baseClassName = "pending-order-remaining-qty"
+        return toLocObjectArray(loc).reduce((a, b) => a + b.qty, 0) <= 1 ? baseClassName + " alert-qty" : baseClassName
     }
     return (
         <div className="pending-orders-list">
@@ -34,7 +40,7 @@ const PendingOrdersList = (props) => {
                             <div className="pending-order-name">
                                 {e.name + " (" + e.boss + ")"}
                             </div>
-                            <div className="pending-order-remaining-qty">
+                            <div className={getRemainingQtyClassName(e.remainingQty)}>
                                 {"REMAINING STOCKS: " + e.remainingQty}
                             </div>
                         </div>
