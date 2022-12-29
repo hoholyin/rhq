@@ -78,14 +78,20 @@
     font-family: Lato-Bold;
 }
 
-.search-item-row-container {
+.search-item-sn-name-container {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
 }
 
-.search-item-sn {
-    font-size: 18px;
+.search-item-row-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.search-item-sn, .search-item-loc {
+    font-size: 17px;
     font-family: Lato-Bold;
 }
 

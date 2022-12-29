@@ -440,8 +440,11 @@ const SubmitOrderForm = (props) => {
                 return (
                     <div className="search-item-row" onClick={() => selectItem(e)}>
                         <div className="search-item-row-container">
-                            <span className="search-item-sn">{e.sn}</span>
-                            <span className="search-item-name">{generateInventoryListName(e.name)}</span>
+                            <div className="search-item-sn-name-container">
+                                <span className="search-item-sn">{e.sn}</span>
+                                <span className="search-item-name">{generateInventoryListName(e.name)}</span>
+                            </div>
+                            <span className="search-item-loc">{e.loc}</span>
                         </div>
                     </div>
                 )
