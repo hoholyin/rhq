@@ -90,7 +90,7 @@ export const isPrice = (price) => {
 }
 
 export const subtractPrice = (p1, p2) => {
-    return addPrice(p1, "$-" + p2.substring(1));
+    return addPrice(p1, "$" + (parseFloat(p2.substring(1)) * -1) );
 }
 
 export const addPrice = (p1, p2) => {
