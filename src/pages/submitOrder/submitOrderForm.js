@@ -257,7 +257,6 @@ const SubmitOrderForm = (props) => {
                 }
                 allOrders.push(order);
             }
-            return;
             await postRequest(apiEndpoint + '/order', allOrders)
             if (tips !== "$0.00") {
                 const tipsObject = {
