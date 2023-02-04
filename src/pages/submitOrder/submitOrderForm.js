@@ -226,6 +226,11 @@ const SubmitOrderForm = (props) => {
                 .map(item => multiplyPrice(item.obj.price, item.qty))
                 .reduce((a, b) => addPrice(a, b), "$0.00")
             const discount = subtractPrice(originalAmt, amount);
+            const additionalTips = subtractPrice(amount, originalAmt);
+            if (parseFloat(additionalTips.substring(1)) > 0) {
+                tips += additionalTips;
+                amt = originalAmt;
+            }
             const getOrdersInfo = await getRequest(apiEndpoint + "/orders")
             const lastInvoiceNumber = getOrdersInfo.data.lastInvoiceNumber
             const firstInvoiceNumber = generateNextInvoiceNumber(lastInvoiceNumber)
