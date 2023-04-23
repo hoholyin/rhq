@@ -15,6 +15,7 @@ const ViewPerformancePage = (props) => {
     const [profit, setProfit] = useState(0)
     const [expense, setExpense] = useState(0)
     const [netProfit, setNetProfit] = useState(0)
+    const [checkBalance, setCheckBalance] = useState("$0.00");
     useEffect(() => {
         refreshSalesFigure();
     }, [])
@@ -28,6 +29,9 @@ const ViewPerformancePage = (props) => {
         setProfit(salesFigure[2])
         setExpense(salesFigure[3])
         setNetProfit(salesFigure[4])
+        const checkBalanceObj = await getRequest(apiEndpoint + '/checkBalance');
+        const checkBalance = checkBalanceObj.checkBalance[0];
+        setCheckBalance(checkBalance);
         setIsLoading(false)
     }
 
@@ -81,6 +85,10 @@ const ViewPerformancePage = (props) => {
             </div>
             {isLoading ? <RHQLoader message={"Getting sales figures"} /> : salesFigureModal()}
             {PerformanceGraph()}
+            <div className="check-balance-container">
+                {isLoading && <RHQLoader message={"Retrieving check balance"} />}
+                {!isLoading && <span>{"CHECK BALANCE: " + checkBalance}</span>}
+            </div>
         </div>
     )
 }
